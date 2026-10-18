@@ -257,6 +257,21 @@ main{max-width:640px; margin:0 auto; padding:0 16px;}
 .autocomplete-item:active{background:var(--card);}
 .autocomplete-item small{color:var(--text-dim);}
 
+/* PEGAR ANÁLISIS DE CLAUDE */
+.paste-entry{margin:-4px 0 14px; background:rgba(79,217,208,.10); color:var(--cyan); border:1px solid rgba(79,217,208,.35); font-weight:700;}
+.paste-steps{margin:-6px 0 14px; padding-left:20px; font-size:13px; line-height:1.55; color:var(--text-dim);}
+.paste-steps li{margin-bottom:3px;}
+.paste-label-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
+.paste-label-row label{margin-bottom:0 !important;}
+#pasteText{font-size:13px; line-height:1.45; resize:vertical; min-height:120px;}
+.paste-summary{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; padding:12px 14px; margin-bottom:10px; border-radius:12px; background:rgba(198,241,53,.08); border:1px solid rgba(198,241,53,.25);}
+.paste-summary b{font-size:20px; color:var(--lime); font-family:var(--font-display);}
+.paste-summary span{font-size:12.5px; color:var(--text-dim);}
+.paste-summary .chk{flex-basis:100%; font-size:12px;}
+.paste-empty{font-size:12.5px; color:var(--coral); line-height:1.5; margin:-4px 0 12px;}
+.paste-unsure{color:var(--coral); font-weight:700;}
+#pasteAddBtn:disabled{opacity:.5;}
+
 /* SELECTOR DE PORCIÓN */
 .portion-sub{font-size:12.5px; color:var(--text-dim); margin:-10px 0 14px;}
 .portion-chips{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px;}
@@ -1033,6 +1048,7 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
         <input type="file" accept="image/*" id="photoGalleryInput" style="display:none;">
       </label>
     </div>
+    <button type="button" class="btn btn-block paste-entry" id="openPasteBtn">📋 Pegar análisis de Claude</button>
     <img id="photoPreview" class="photo-preview">
     <div class="analyzing" id="analyzingBox" style="display:none;">
       <div class="spinner"></div>
@@ -1075,6 +1091,29 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
     </div>
 
     <button class="btn btn-accent btn-block" id="saveMealBtn">Guardar comida</button>
+  </div>
+</div>
+
+<!-- MODAL: PEGAR ANÁLISIS DE CLAUDE (se abre encima de Registrar comida) -->
+<div class="modal-overlay" id="modalPaste">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><h3>Pegar análisis de Claude</h3><button class="modal-close" data-close="modalPaste">✕</button></div>
+    <ol class="paste-steps">
+      <li>Copia el prompt y pégalo en Claude junto con la foto de tu comida.</li>
+      <li>Copia la respuesta completa de Claude.</li>
+      <li>Pégala aquí y revisa los alimentos antes de agregarlos.</li>
+    </ol>
+    <button type="button" class="btn btn-ghost btn-block" id="copyPromptBtn">Copiar prompt</button>
+    <div class="field" style="margin-top:14px;">
+      <div class="paste-label-row">
+        <label for="pasteText">Respuesta de Claude</label>
+        <button type="button" class="btn btn-sm" id="pasteClipBtn">Pegar</button>
+      </div>
+      <textarea id="pasteText" rows="7" placeholder="Huevo revuelto&#10;kcal: 155&#10;Proteína: 13&#10;Carbos: 1.1&#10;Grasa: 11&#10;Fibra: 0&#10;Gramos: 150"></textarea>
+    </div>
+    <div id="pastePreview"></div>
+    <button class="btn btn-accent btn-block" id="pasteAddBtn" disabled>Agregar al plato</button>
   </div>
 </div>
 
@@ -1334,6 +1373,7 @@ const FOOD_DB = [
 ["Cerveza Águila",41,0.3,3.3,0],["Cerveza Club Colombia Dorada",43,0.3,3.5,0],
 ["Cerveza Poker",42,0.3,3.4,0],["Aguardiente Antioqueño",231,0,29,0],
 ["Vino tinto",85,0.1,2.6,0],
+["Jugo de naranja natural",45,0.7,10.4,0.2,0.2,8.4,1],
 
 /* ===== TUS PRODUCTOS (valores tomados de la etiqueta, por 100 g o 100 ml) ===== */
 ["Fiocco Avena instantánea fresa (preparada con leche entera)",87,3.4,13,3.0,3.0,3.9,58],
@@ -2677,12 +2717,14 @@ foodAutocomplete.addEventListener('click',(e)=>{
   if(item.dataset.customfood){
     const name = foodSearchInput.value.trim();
     if(!name) return;
-    const kcal100 = parseFloat(prompt('Calorías por 100g de "'+name+'":','0'))||0;
-    const p100 = parseFloat(prompt('Proteína (g) por 100g:','0'))||0;
-    const c100 = parseFloat(prompt('Carbohidratos (g) por 100g:','0'))||0;
-    const f100 = parseFloat(prompt('Grasas (g) por 100g:','0'))||0;
-    const fib100 = parseFloat(prompt('Fibra (g) por 100g (opcional, 0 si no sabes):','0'))||0;
-    const grams = parseFloat(prompt('¿Cuántos gramos vas a registrar?','100'))||100;
+    /* Acepta "1,5" y "1.5" */
+    const num = (msg, def) => parseFloat(String(prompt(msg, def)||'').replace(',','.'));
+    const kcal100 = num('Calorías por 100g de "'+name+'":','0')||0;
+    const p100 = num('Proteína (g) por 100g:','0')||0;
+    const c100 = num('Carbohidratos (g) por 100g:','0')||0;
+    const f100 = num('Grasas (g) por 100g:','0')||0;
+    const fib100 = num('Fibra (g) por 100g (opcional, 0 si no sabes):','0')||0;
+    const grams = num('¿Cuántos gramos vas a registrar?','100')||100;
     const factor = grams/100;
     mealItems.push({name, grams, kcal:kcal100*factor, p:p100*factor, c:c100*factor, f:f100*factor, fib:fib100*factor, sug:0, sod:0});
     renderMealItems(); recalcTotalsFromItems();
@@ -2728,6 +2770,7 @@ const PORTION_RULES = [
   [/aguardiente/, [["1 trago",30],["3 tragos",90]], 'ml'],
   [/vino/, [["1 copa",150],["2 copas",300]], 'ml'],
   [/gatorade/, [["½ botella",250],["1 botella",500]], 'ml'],
+  [/jugo de naranja/, [["½ vaso",125],["1 vaso",250],["1 vaso grande",350]], 'ml'],
   [/coca-cola|postobon|\bhit\b|del valle|pony|hatsu|jugo|agua cristal|agua con gas/, [["1 vaso",250],["1 lata",350],["1 botella personal",400]], 'ml'],
   [/leche|parmalat/, [["½ vaso",125],["1 vaso",250],["1 taza",240]], 'ml'],
   [/queso parmesano/, [["1 cucharada rallado",5],["3 cucharadas",15]]],
@@ -2805,7 +2848,7 @@ const PORTION_RULES = [
   [/banano/, [["1 banano pequeño",90],["1 banano mediano",120]]],
   [/manzana/, [["½ manzana",90],["1 manzana mediana",180]]],
   [/\bpera\b/, [["1 pera mediana",170]]],
-  [/naranja/, [["1 naranja mediana",130],["1 vaso de jugo",250]]],
+  [/naranja/, [["1 naranja pequeña",100],["1 naranja mediana",130]]],
   [/kiwi/, [["1 kiwi",75],["2 kiwis",150]]],
   [/limon/, [["Jugo de 1 limón",30],["1 limón",60]]],
   [/aguacate/, [["1 tajada",30],["½ aguacate Hass",70],["¼ aguacate grande",80]]],
@@ -2882,6 +2925,155 @@ document.getElementById('portionAddBtn').addEventListener('click',()=>{
   if(!document.getElementById('mealName').value){ document.getElementById('mealName').value = "Plato manual"; }
   closeModal('modalPortion');
   toast(`Agregado: ${food.n}`);
+});
+
+/* ============ PEGAR ANÁLISIS DE CLAUDE (foto → texto → alimentos) ============
+   Lee bloques "Nombre / kcal / Proteína / Carbos / Grasa / Fibra / Gramos" (valores por 100 g).
+   Tolera markdown, viñetas, "ml", "(?)", todo en una línea y la línea TOTAL. */
+const FOOD_PHOTO_PROMPT = `Analiza la foto de mi comida para registrarla en mi app NutriFit.
+
+Pasos:
+1. Identifica cada alimento por separado. Incluye lo que casi no se ve: el aceite o la mantequilla de la preparación, salsas, untables (queso crema, mantequilla, mayonesa) y bebidas.
+2. Estima cuántos gramos hay de cada uno. Usa como referencia el plato (unos 25 cm), los cubiertos, el vaso y el tamaño normal de los alimentos en Colombia. Las bebidas van en ml (1 ml = 1 g).
+3. Da los valores nutricionales POR 100 g (o 100 ml) del alimento tal como está servido (cocido, frito o preparado).
+4. Si se ve la etiqueta de un producto empacado, usa los datos de la etiqueta.
+
+Responde solo con este formato, un bloque por alimento y en este orden exacto:
+
+Nombre del alimento
+kcal:
+Proteína:
+Carbos:
+Grasa:
+Fibra:
+Gramos:
+
+Reglas:
+- kcal, Proteína, Carbos, Grasa y Fibra son por 100 g. Gramos es la cantidad que comí.
+- Solo números, sin unidades, con punto decimal (ejemplo: 1.5).
+- Al final escribe una línea: TOTAL: X kcal | X g proteína | X g carbos | X g grasa | X g fibra
+- Si algo cambia mucho el resultado y no se ve bien (cuántos huevos hay, si el untable es mantequilla o queso crema, si el jugo es natural o de caja), márcalo con (?) y hazme máximo 2 preguntas al final.`;
+const PASTE_FIELD_RE = /(kcal|calor[ií]as|energ[ií]a|prote[ií]nas?|carbohidratos|carbos?|grasas?|fibra|gramos|cantidad)\s*(?:\/\s*100\s*(?:g|ml)?)?\s*(?:\([^)]*\))?[^:=\d\n]{0,12}[:=]\s*[*_]*\s*(\d+(?:[.,]\d+)?)/gi;
+function pasteFieldKey(word){
+  const w = normalizeText(word);
+  if(/^(kcal|calor|energ)/.test(w)) return 'kcal';
+  if(w.startsWith('prote')) return 'p';
+  if(w.startsWith('carb')) return 'c';
+  if(w.startsWith('gras')) return 'f';
+  if(w.startsWith('fibra')) return 'fib';
+  return 'g';
+}
+function pasteNum(s){ return parseFloat(String(s).replace(',','.'))||0; }
+function cleanPasteName(s){
+  return String(s)
+    .replace(/^\s*(?:[#>*•\-–—]+\s*)*(?:\d+[.)]\s+)?/,'')
+    .replace(/\*\*|__|`/g,'')
+    .replace(/\(\?\)/g,'')
+    .replace(/[\s|:;,\-–—·]+$/,'')
+    .trim();
+}
+function parsePastedAnalysis(text){
+  const items = []; let cur = null, claudeTotal = null;
+  const newItem = name => ({name, kcal:0, p:0, c:0, f:0, fib:0, g:0, unit:'g', unsure:false, has:{}});
+  const flush = ()=>{ if(cur && cur.has.kcal && cur.has.g && cur.g>0) items.push(cur); cur = null; };
+  for(const raw of String(text||'').replace(/\r/g,'').split('\n')){
+    const line = raw.trim();
+    if(!line || /^[-–—_*=\s]+$/.test(line)) continue;
+    if(/^[\W_]*total/i.test(line)){
+      const m = line.match(/(\d+(?:[.,]\d+)?)\s*kcal/i); if(m) claudeTotal = pasteNum(m[1]);
+      flush(); continue;
+    }
+    const ms = [...line.matchAll(PASTE_FIELD_RE)];
+    const prefix = cleanPasteName(ms.length ? line.slice(0, ms[0].index) : line);
+    const looksLikeName = prefix && /[a-záéíóúñ]/i.test(prefix) && prefix.length <= 70 && !/\?\s*$/.test(line) && !(ms.length===0 && /^¿/.test(line));
+    if(looksLikeName && (ms.length>0 || !/[:=]\s*\S/.test(line))){
+      flush(); cur = newItem(prefix);
+    }
+    for(const m of ms){
+      const key = pasteFieldKey(m[1]);
+      if(!cur) cur = newItem('Alimento '+(items.length+1));
+      else if(cur.has[key]){ flush(); cur = newItem('Alimento '+(items.length+1)); }
+      cur[key] = pasteNum(m[2]); cur.has[key] = true;
+      if(key==='g' && /^\s*ml\b/i.test(line.slice(m.index + m[0].length))) cur.unit = 'ml';
+    }
+    if(cur && /\(\?\)/.test(line)) cur.unsure = true;
+  }
+  flush();
+  return {items, claudeTotal};
+}
+let pasteParsed = {items:[], claudeTotal:null};
+function pasteTotals(items){
+  return items.reduce((t,it)=>{ const k = it.g/100; t.kcal+=it.kcal*k; t.p+=it.p*k; t.c+=it.c*k; t.f+=it.f*k; t.fib+=it.fib*k; return t; }, {kcal:0,p:0,c:0,f:0,fib:0});
+}
+function renderPastePreview(){
+  const box = document.getElementById('pastePreview');
+  const text = document.getElementById('pasteText').value.trim();
+  const {items, claudeTotal} = pasteParsed;
+  const btn = document.getElementById('pasteAddBtn');
+  btn.disabled = items.length===0;
+  btn.textContent = items.length ? `Agregar ${items.length} ${items.length===1?'alimento':'alimentos'} al plato` : 'Agregar al plato';
+  if(!text){ box.innerHTML = ''; return; }
+  if(!items.length){
+    box.innerHTML = '<p class="paste-empty">No encontré alimentos en el texto. Cada alimento necesita al menos una línea de kcal y una de Gramos.</p>';
+    return;
+  }
+  const t = pasteTotals(items);
+  const diff = claudeTotal ? Math.abs(t.kcal - claudeTotal) / claudeTotal : 0;
+  const check = (claudeTotal && !pasteParsed.edited) ? `<span class="chk">${diff <= 0.05 ? '✓ Coincide con el total de Claude' : `Claude calculó ${Math.round(claudeTotal)} kcal; revisa los gramos de cada alimento`}</span>` : '';
+  box.innerHTML = `
+    <div class="paste-summary"><b>${Math.round(t.kcal).toLocaleString('es-CO')} kcal</b><span>${Math.round(t.p)} g prot</span><span>${Math.round(t.c)} g carb</span><span>${Math.round(t.f)} g grasa</span><span>${Math.round(t.fib*10)/10} g fibra</span>${check}</div>
+    ${items.map((it,i)=>{ const k = it.g/100; return `
+      <div class="food-search-item">
+        <div style="min-width:0;">
+          <div class="n">${escapeHtml(it.name)}${it.unsure?' <span class="paste-unsure">(?)</span>':''}</div>
+          <div class="m">${fmtGrams(it.g)} ${it.unit} · ${Math.round(it.kcal*k)} kcal · ${Math.round(it.p*k)} g prot · ${Math.round(it.c*k)} g carb · ${Math.round(it.f*k)} g grasa</div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="removePasteItem(${i})" aria-label="Quitar">✕</button>
+      </div>`; }).join('')}
+    ${items.some(it=>it.unsure) ? '<p style="font-size:12px; color:var(--text-dim); margin:4px 0 12px;">Los marcados con (?) son estimaciones dudosas: responde las preguntas de Claude si quieres más precisión.</p>' : ''}`;
+}
+function updatePasteFromText(){ pasteParsed = parsePastedAnalysis(document.getElementById('pasteText').value); renderPastePreview(); }
+function removePasteItem(i){ pasteParsed.items.splice(i,1); pasteParsed.edited = true; renderPastePreview(); }
+document.getElementById('openPasteBtn').addEventListener('click',()=>{ updatePasteFromText(); openModal('modalPaste'); });
+document.getElementById('pasteText').addEventListener('input', updatePasteFromText);
+document.getElementById('copyPromptBtn').addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText(FOOD_PHOTO_PROMPT);
+  }catch(e){
+    const ta = document.createElement('textarea'); ta.value = FOOD_PHOTO_PROMPT; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(_){} ta.remove();
+  }
+  toast('Prompt copiado: pégalo en Claude con la foto');
+});
+document.getElementById('pasteClipBtn').addEventListener('click', async ()=>{
+  try{
+    const t = await navigator.clipboard.readText();
+    if(!t){ toast('El portapapeles está vacío'); return; }
+    document.getElementById('pasteText').value = t; updatePasteFromText();
+  }catch(e){
+    document.getElementById('pasteText').focus();
+    toast('Mantén presionado el cuadro y elige "Pegar"');
+  }
+});
+document.getElementById('pasteAddBtn').addEventListener('click',()=>{
+  const items = pasteParsed.items;
+  if(!items.length) return;
+  items.forEach(it=>{
+    const k = it.g/100;
+    mealItems.push({name: it.name + (it.unsure?' (?)':''), grams: fmtGrams(it.g), unit: it.unit, portion: '',
+      kcal: it.kcal*k, p: it.p*k, c: it.c*k, f: it.f*k, fib: it.fib*k, sug: 0, sod: 0});
+  });
+  renderMealItems(); recalcTotalsFromItems();
+  const nameInput = document.getElementById('mealName');
+  if(!nameInput.value || nameInput.value==='Plato manual'){
+    const n = items.map(it=>it.name).slice(0,3).join(', ');
+    nameInput.value = n.length > 48 ? n.slice(0,45)+'…' : n;
+  }
+  const count = items.length;
+  document.getElementById('pasteText').value = ''; pasteParsed = {items:[], claudeTotal:null};
+  closeModal('modalPaste');
+  toast(`${count} ${count===1?'alimento agregado':'alimentos agregados'}: revisa y guarda la comida`);
 });
 
 /* Foto: captura / galería */
