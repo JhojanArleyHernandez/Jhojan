@@ -257,6 +257,35 @@ main{max-width:640px; margin:0 auto; padding:0 16px;}
 .autocomplete-item:active{background:var(--card);}
 .autocomplete-item small{color:var(--text-dim);}
 
+/* SELECTOR DE PORCIÓN */
+.portion-sub{font-size:12.5px; color:var(--text-dim); margin:-10px 0 14px;}
+.portion-chips{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px;}
+.portion-chip{display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; text-align:left;
+  padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:var(--card-2); color:var(--text);}
+.portion-chip b{font-size:13.5px; font-weight:700; line-height:1.25;}
+.portion-chip small{font-size:11.5px; color:var(--text-dim);}
+.portion-chip.active{border-color:var(--lime); background:rgba(198,241,53,.12);}
+.portion-chip.active small{color:var(--lime);}
+.portion-qty{display:flex; align-items:center; justify-content:space-between; margin:-2px 0 14px; font-size:13.5px; font-weight:600;}
+.portion-qty.muted{opacity:.45;}
+.stepper{display:flex; align-items:center; gap:4px; background:var(--card-2); border:1px solid var(--border); border-radius:12px; padding:3px;}
+.stepper button{width:38px; height:34px; border:none; border-radius:9px; background:transparent; color:var(--text); font-size:20px; font-weight:700;}
+.stepper button:active{background:var(--card);}
+.stepper b{min-width:36px; text-align:center; font-size:16px;}
+.portion-result{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; padding:12px 14px; margin-bottom:12px; border-radius:12px; background:rgba(198,241,53,.08); border:1px solid rgba(198,241,53,.25);}
+.portion-result b{font-size:20px; color:var(--lime); font-family:var(--font-display);}
+.portion-result span{font-size:12.5px; color:var(--text-dim);}
+#portionAddBtn:disabled{opacity:.5;}
+
+/* AYUDA DESPLEGABLE (RIR) */
+.help-note{margin:0 0 12px; border:1px solid var(--border); border-radius:12px; background:var(--card-2); padding:9px 12px;}
+.help-note summary{font-size:12.5px; font-weight:700; color:var(--cyan, #4fd1ff); cursor:pointer; list-style:none;}
+.help-note summary::-webkit-details-marker{display:none;}
+.help-note summary::after{content:'+'; float:right; font-weight:800;}
+.help-note[open] summary::after{content:'–';}
+.help-note p{font-size:12.5px; line-height:1.5; color:var(--text-dim); margin-top:8px;}
+.help-note b{color:var(--text);}
+
 /* WEEK GRID */
 .week-grid{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; margin-bottom:16px;}
 .day-cell{
@@ -265,6 +294,9 @@ main{max-width:640px; margin:0 auto; padding:0 16px;}
 }
 .day-cell .d{font-size:10px; color:var(--text-dim); font-weight:700; text-transform:uppercase;}
 .day-cell .t{font-size:9.5px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:var(--lime); line-height:1.2; min-height:24px; display:flex; align-items:center; justify-content:center;}
+.day-cell .t:has(.ab){flex-direction:column; gap:2px;}
+.day-cell .t .ab{font-size:9px; font-weight:800; line-height:1; padding:2px 5px; border-radius:6px; background:rgba(198,241,53,.14);}
+@media (max-width:340px){ .day-cell{padding:8px 1px;} .day-cell .t{font-size:8.5px; letter-spacing:-.2px;} }
 .day-cell.today{border-color:var(--lime);}
 .day-cell.rest .t{color:var(--text-faint);}
 
@@ -622,7 +654,7 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
     <div id="gymtab-hoy">
       <div class="card" id="planUpdateBanner" style="display:none; border-color:var(--lime); background:rgba(198,241,53,.08);">
         <div class="card-title" style="color:var(--lime);">Tu plan de entrenamiento está listo</div>
-        <p style="font-size:13.5px; line-height:1.5; margin-bottom:12px; color:var(--text);">Lun/Jue: pecho + tríceps + hombro. Mar/Vie: espalda + bíceps. Mié/Sáb: pierna. Basado en tu rutina, con los ajustes recomendados. Reemplaza los ejercicios de tu semana actual.</p>
+        <p style="font-size:13.5px; line-height:1.5; margin-bottom:12px; color:var(--text);">Tu split de siempre con un día A (fuerza) y uno B (volumen), cardio después de pesas y abdomen 4 días. Reemplaza los ejercicios de tu semana actual.</p>
         <div style="display:flex; gap:10px;">
           <button class="btn btn-sm" id="planUpdateLater" style="flex:1;">Ahora no</button>
           <button class="btn btn-sm btn-accent" id="planUpdateApply" style="flex:1;">Aplicar plan</button>
@@ -651,6 +683,11 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
           <div class="card-title" style="margin-bottom:0; flex-shrink:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" id="sessionDayLabel">Hoy</div>
           <span class="chip" id="sessionTypeChip" style="flex-shrink:0;">—</span>
         </div>
+        <details class="help-note">
+          <summary>¿Qué es el RIR?</summary>
+          <p>Son las <b>repeticiones en reserva</b>: cuántas más podías hacer cuando terminaste la serie. Si hiciste 8 y te quedaban 2 más, es RIR 2. Apunta a <b>RIR 1-2</b>: cerca del fallo, pero con buena técnica. RIR 0 es el fallo total: guárdalo para la última serie de máquinas y poleas.</p>
+          <p>Anótalo en cada serie: la app lo usa para sugerirte cuándo subir el peso.</p>
+        </details>
         <div id="sessionExercises"></div>
         <button class="btn btn-accent btn-block" style="margin-top:6px;" id="finishSessionBtn">Marcar rutina como completada</button>
       </div>
@@ -668,9 +705,15 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
           <label>Tipo de rutina</label>
           <select id="dayTypeSelect">
             <option value="descanso">Descanso</option>
-            <option value="pecho">Pecho + tríceps + hombro</option>
-            <option value="espalda">Espalda + bíceps</option>
-            <option value="pierna">Pierna</option>
+            <option value="pechoA">Pecho + tríceps + hombro A (fuerza)</option>
+            <option value="pechoB">Pecho + tríceps + hombro B (volumen)</option>
+            <option value="espaldaA">Espalda + bíceps A (fuerza)</option>
+            <option value="espaldaB">Espalda + bíceps B (volumen)</option>
+            <option value="piernaA">Pierna A (fuerza)</option>
+            <option value="piernaB">Pierna B (volumen)</option>
+            <option value="pecho">Pecho + tríceps + hombro (tu rutina original)</option>
+            <option value="espalda">Espalda + bíceps (tu rutina original)</option>
+            <option value="pierna">Pierna (tu rutina original)</option>
             <option value="empuje">Empuje básico (pecho / hombro / tríceps)</option>
             <option value="tiron">Tirón básico (espalda / bíceps)</option>
             <option value="hombro">Solo hombro</option>
@@ -1035,6 +1078,38 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
   </div>
 </div>
 
+<!-- MODAL: PORCIÓN (se abre encima de Registrar comida) -->
+<div class="modal-overlay" id="modalPortion">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-head"><h3 id="portionTitle">Alimento</h3><button class="modal-close" data-close="modalPortion">✕</button></div>
+    <p class="portion-sub" id="portionSub"></p>
+    <div class="field">
+      <label>¿Cuánto comiste?</label>
+      <div class="portion-chips" id="portionChips"></div>
+    </div>
+    <div class="portion-qty" id="portionQtyRow">
+      <span>Cantidad</span>
+      <div class="stepper">
+        <button type="button" id="qtyMinus" aria-label="Menos">−</button>
+        <b id="qtyVal">1</b>
+        <button type="button" id="qtyPlus" aria-label="Más">+</button>
+      </div>
+    </div>
+    <div class="field">
+      <label id="portionGramsLabel">Gramos (si los sabes)</label>
+      <input type="text" inputmode="decimal" id="portionGrams" autocomplete="off">
+    </div>
+    <div class="portion-result" id="portionResult"></div>
+    <details class="help-note">
+      <summary>Medir con la mano</summary>
+      <p><b>Palma</b> (tamaño y grosor): 1 porción de carne, pollo o pescado, unos 110 g. <b>Puño</b>: 1 taza de arroz, pasta o fruta. <b>Mano ahuecada</b>: 1 puñado de maní o almendras, unos 30 g. <b>Pulgar</b>: 1 cucharada de aceite o mantequilla de maní.</p>
+      <p>Si viene empacado, el peso está impreso en la etiqueta. Las porciones son aproximadas: si un día tienes gramera, pesa tus comidas de siempre una vez para calibrar el ojo.</p>
+    </details>
+    <button class="btn btn-accent btn-block" id="portionAddBtn">Agregar al plato</button>
+  </div>
+</div>
+
 <!-- MODAL: AGREGAR EJERCICIO -->
 <div class="modal-overlay" id="modalExercise">
   <div class="modal">
@@ -1258,7 +1333,16 @@ const FOOD_DB = [
 ["Oblea con arequipe",320,3,68,4],["Aguapanela con limón",75,0,19,0],
 ["Cerveza Águila",41,0.3,3.3,0],["Cerveza Club Colombia Dorada",43,0.3,3.5,0],
 ["Cerveza Poker",42,0.3,3.4,0],["Aguardiente Antioqueño",231,0,29,0],
-["Vino tinto",85,0.1,2.6,0]
+["Vino tinto",85,0.1,2.6,0],
+
+/* ===== TUS PRODUCTOS (valores tomados de la etiqueta, por 100 g o 100 ml) ===== */
+["Fiocco Avena instantánea fresa (preparada con leche entera)",87,3.4,13,3.0,3.0,3.9,58],
+["Bem Granola Frutos Rojos",382,9.1,80,5.1,10,13,44],
+["Fit-Graan Granola Frutos Rojos",367,9.0,80,2.7,6.7,24,33],
+["Nestum Trigo Miel (preparado)",113,2.2,17,4.0,0,8.8,21],
+["Healthy Sports Iso Whey vainilla",335,84,9.5,4.3,1.2,3.7,170],
+["SN Creatina monohidratada",0,0,0,0,0,0,0],
+["Proscience EAA's + glutamina (aminoácidos)",83,0,20.6,0,0,0,56]
 
 ].map(f=>({n:f[0],kcal:f[1],p:f[2],c:f[3],f:f[4],fib:f[5]||0,sug:f[6]||0,sod:f[7]||0}));
 
@@ -1296,12 +1380,65 @@ const EXERCISE_DB = [
 ["Remo sentado en polea baja","Espalda"],["Encogimientos con barra Z","Espalda"],
 ["Curl con barra Z","Bíceps"],["Curl alterno con mancuernas","Bíceps"],
 ["Sentadilla en Smith","Pierna"],["Elevación de gemelos en máquina","Pierna"],
-["Caminata en cuclillas con mancuernas","Pierna"]
+["Caminata en cuclillas con mancuernas","Pierna"],
+/* ===== Plan A/B ===== */
+["Extensión de tríceps sobre la cabeza con cuerda","Tríceps"],["Press inclinado en Smith","Pecho"],
+["Curl inclinado con mancuernas","Bíceps"],["Pullover en polea","Espalda"],
+["Pec deck invertido (deltoide posterior)","Hombro"],["Caminata inclinada en cinta","Cardio"],
+["HIIT en bicicleta (intervalos)","Cardio"]
 ].map(e=>({n:e[0],g:e[1]}));
 
 /* Rutinas sugeridas por defecto según el tipo de día (el usuario puede editarlas libremente) */
 const DEFAULT_ROUTINES = {
-  /* Plan personal: Pecho + tríceps + hombro (lun/jue), Espalda + bíceps (mar/vie), Pierna (mié/sáb).
+  /* Plan recomendado v3: mismo split del usuario con día A (fuerza) y B (volumen).
+     ~18 series por sesión, prioridad a brazos, hombro lateral y pecho alto; cardio después de pesas
+     solo en días de tren superior; abdomen 4 días. */
+  pechoA:[["Press de banca","Pecho",4,"6-8",0,"Calienta con 2 series ligeras. Descanso 2-3 min. Cuando completes 8 reps en las 4 series, sube el peso"],
+    ["Press inclinado con mancuernas","Pecho",3,"8-10",0,"Descanso 2 min"],
+    ["Peck deck (contractora)","Pecho",2,"12-15",0,"Aprieta 1 s al cerrar. Descanso 90 s"],
+    ["Elevación lateral unilateral","Hombro",4,"12-15",0,"Por brazo. Es tu prioridad para la forma en V. Descanso 60 s"],
+    ["Extensión de tríceps sobre la cabeza con cuerda","Tríceps",3,"10-12",0,"Trabaja el tríceps estirado, la posición que más lo hace crecer"],
+    ["Jalón de tríceps con cuerda","Tríceps",2,"12-15",0,"Última serie: drop set (baja 50% del peso y sigue al fallo)"],
+    ["Abdominales crunch","Core",3,"15",0,"Enrolla la columna y exhala al subir. Si te queda fácil, sostén un disco en el pecho"],
+    ["Plancha (plank)","Core",3,"45 s",0,"Aprieta glúteos, sin hundir la cadera"],
+    ["Caminata inclinada en cinta","Cardio",1,"25 min",0,"Después de las pesas. Inclinación 10-12%, 5-6 km/h, sin agarrarte"]],
+  espaldaA:[["Jalón abierto al pecho","Espalda",4,"8-10",0,"Calienta con 1-2 series ligeras. Descanso 2 min"],
+    ["Remo con mancuerna","Espalda",3,"8-10",0,"Por brazo. Descanso 90 s"],
+    ["Remo sentado en polea baja","Espalda",3,"10-12",0,"Junta los omóplatos al final del recorrido"],
+    ["Face pull","Hombro",3,"15",0,"Hombro posterior: hace que el hombro se vea más redondo"],
+    ["Curl con barra Z","Bíceps",3,"8-10",0,"Descanso 90 s"],
+    ["Curl martillo","Bíceps",3,"10-12",0,"Le da grosor al brazo"],
+    ["Elevación de piernas colgado","Core",3,"12",0,"Sube lento y sin balancearte"],
+    ["Plancha lateral","Core",3,"30 s",0,"Por lado"],
+    ["Elíptica","Cardio",1,"20 min",0,"Ritmo suave: puedes hablar con frases cortas. También sirve la bici estática"]],
+  piernaA:[["Sentadilla en Smith","Pierna",4,"6-8",0,"Calienta con 2 series ligeras. Descanso 2-3 min"],
+    ["Peso muerto rumano","Pierna",3,"8-10",0,"Cadera atrás y espalda recta. Descanso 2 min"],
+    ["Prensa de piernas","Pierna",3,"10-12",0,"Descanso 90 s"],
+    ["Curl femoral","Pierna",3,"10-12",0],
+    ["Elevación de gemelos en máquina","Pierna",3,"12-15",0,"Pausa de 1 s abajo, estirando el gemelo"]],
+  pechoB:[["Press inclinado en Smith","Pecho",4,"8-10",0,"Primero el pecho alto, que es lo que más se nota. Banco a 30°. Descanso 2 min"],
+    ["Press con mancuernas plano","Pecho",3,"10-12",0,"Descanso 90 s"],
+    ["Cruce de poleas","Pecho",2,"12-15",0,"Aprieta 1 s al juntar las manos"],
+    ["Elevación lateral por detrás del cuerpo (polea)","Hombro",4,"12-15",0,"Por brazo. Descanso 60 s"],
+    ["Extensión de tríceps unilateral sobre la cabeza","Tríceps",3,"10-12",0,"Por brazo, en polea baja. Baja hasta sentir el estiramiento"],
+    ["Jalón de tríceps con barra","Tríceps",3,"10-12",0,"Última serie: drop set"],
+    ["Rueda abdominal","Core",3,"10",0,"Desde las rodillas. Avanza solo hasta donde mantengas la espalda recta"],
+    ["Plancha (plank)","Core",3,"45 s",0],
+    ["HIIT en bicicleta (intervalos)","Cardio",1,"15 min",0,"30 s fuerte y 90 s suave, 6-8 veces. Sáltalo si llegas muy cansado o en semana de descarga"]],
+  espaldaB:[["Curl inclinado con mancuernas","Bíceps",3,"10-12",0,"Va primero porque los brazos son tu prioridad. Banco a 45°, brazos colgando hacia atrás"],
+    ["Curl alterno con mancuernas","Bíceps",2,"12",0,"Última serie: drop set"],
+    ["Jalón cerrado al pecho","Espalda",4,"10-12",0,"Descanso 90 s"],
+    ["Remo en máquina","Espalda",3,"10-12",0],
+    ["Pullover en polea","Espalda",2,"12-15",0,"Brazos casi rectos; lleva la barra hasta los muslos"],
+    ["Pec deck invertido (deltoide posterior)","Hombro",3,"15",0,"De frente a la máquina, abre los brazos hacia atrás"],
+    ["Elevación de piernas colgado","Core",3,"12",0],
+    ["Plancha lateral","Core",3,"30 s",0,"Por lado"]],
+  piernaB:[["Prensa de piernas","Pierna",4,"10-12",0,"Calienta con 1-2 series ligeras. Descanso 2 min"],
+    ["Sentadilla búlgara","Pierna",3,"8-10",0,"Por pierna, con el pie de atrás sobre un banco"],
+    ["Extensión de cuádriceps","Pierna",3,"12-15",0,"Última serie: drop set"],
+    ["Curl femoral","Pierna",3,"12-15",0],
+    ["Elevación de gemelos en máquina","Pierna",3,"15",0,"Última serie: suelta el peso y sigue sin peso al fallo"]],
+  /* Rutina original del usuario: Pecho + tríceps + hombro (lun/jue), Espalda + bíceps (mar/vie), Pierna (mié/sáb).
      Basado en la rutina real del usuario con ajustes: deltoide posterior en vez de elevación frontal,
      un drop set por músculo, más remo horizontal, femoral directo y orden más seguro en pierna. */
   pecho:[["Press de banca","Pecho",4,8,0,"Calienta con 2 series ligeras. Rango 6-10 reps. Descanso 2 min"],
@@ -1355,8 +1492,8 @@ const DEFAULT_ROUTINES = {
 };
 function buildDefaultRoutinePlan(){
   const plan = {};
-  /* Split Empuje/Tirón/Pierna repetido dos veces por semana, como lo entrena el usuario */
-  const map = {lunes:"pecho",martes:"espalda",miercoles:"pierna",jueves:"pecho",viernes:"espalda",sabado:"pierna",domingo:"descanso"};
+  /* Split del usuario (pecho / espalda / pierna) dos veces por semana: A = fuerza, B = volumen */
+  const map = {lunes:"pechoA",martes:"espaldaA",miercoles:"piernaA",jueves:"pechoB",viernes:"espaldaB",sabado:"piernaB",domingo:"descanso"};
   Object.entries(map).forEach(([day,tipo])=>{
     const list = DEFAULT_ROUTINES[tipo] || [];
     plan[day] = { tipo, ejercicios: list.map(e=>({name:e[0],group:e[1],series:e[2],reps:e[3],peso:e[4],notas:e[5]||""})) };
@@ -1572,8 +1709,16 @@ const EXERCISE_ILLUSTRATIONS = {
 "Curl alterno con mancuernas":`<svg viewBox="0 0 200 140"><circle cx="100" cy="26" r="10" class="fig-head"/><line x1="100" y1="36" x2="100" y2="88" class="fig-line"/><line x1="100" y1="88" x2="86" y2="128" class="fig-line"/><line x1="100" y1="88" x2="114" y2="128" class="fig-line"/><line x1="90" y1="44" x2="84" y2="76" class="fig-line"/><line x1="84" y1="76" x2="82" y2="98" class="fig-line"/><circle cx="82" cy="104" r="6" class="fig-line"/><line x1="110" y1="44" x2="116" y2="76" class="fig-line"/><line x1="116" y1="76" x2="118" y2="54" class="fig-line"/><circle cx="118" cy="48" r="6" class="fig-line"/><path d="M138 96 A28 28 0 0 0 136 52" class="fig-accent"/><path d="M62 52 A28 28 0 0 0 64 96" class="fig-accent" stroke-dasharray="4 4"/></svg>`,
 "Sentadilla en Smith":`<svg viewBox="0 0 200 140"><line x1="45" y1="5" x2="45" y2="132" class="fig-bench"/><line x1="155" y1="5" x2="155" y2="132" class="fig-bench"/><line x1="45" y1="42" x2="155" y2="42" class="fig-line"/><circle cx="100" cy="30" r="10" class="fig-head"/><line x1="100" y1="44" x2="96" y2="76" class="fig-line"/><line x1="96" y1="76" x2="72" y2="96" class="fig-line"/><line x1="72" y1="96" x2="80" y2="128" class="fig-line"/><line x1="96" y1="76" x2="124" y2="96" class="fig-line"/><line x1="124" y1="96" x2="118" y2="128" class="fig-line"/><line x1="98" y1="48" x2="72" y2="42" class="fig-line"/><line x1="98" y1="48" x2="128" y2="42" class="fig-line"/><line x1="172" y1="112" x2="172" y2="70" class="fig-accent"/><line x1="172" y1="70" x2="166" y2="78" class="fig-accent"/><line x1="172" y1="70" x2="178" y2="78" class="fig-accent"/></svg>`,
 "Elevación de gemelos en máquina":`<svg viewBox="0 0 200 140"><rect x="62" y="116" width="48" height="10" rx="3" class="fig-bench"/><line x1="140" y1="10" x2="140" y2="132" class="fig-bench"/><line x1="140" y1="46" x2="104" y2="46" class="fig-bench"/><rect x="80" y="40" width="26" height="10" rx="4" class="fig-bench"/><circle cx="92" cy="26" r="9" class="fig-head"/><line x1="92" y1="50" x2="92" y2="88" class="fig-line"/><line x1="92" y1="88" x2="88" y2="110" class="fig-line"/><line x1="88" y1="110" x2="80" y2="116" class="fig-line"/><line x1="92" y1="88" x2="98" y2="110" class="fig-line"/><line x1="98" y1="110" x2="90" y2="116" class="fig-line"/><line x1="86" y1="54" x2="80" y2="44" class="fig-line"/><line x1="40" y1="122" x2="40" y2="88" class="fig-accent"/><line x1="40" y1="88" x2="34" y2="96" class="fig-accent"/><line x1="40" y1="88" x2="46" y2="96" class="fig-accent"/></svg>`,
-"Caminata en cuclillas con mancuernas":`<svg viewBox="0 0 200 140"><circle cx="80" cy="44" r="10" class="fig-head"/><line x1="82" y1="54" x2="88" y2="84" class="fig-line"/><line x1="88" y1="84" x2="112" y2="98" class="fig-line"/><line x1="112" y1="98" x2="110" y2="126" class="fig-line"/><line x1="88" y1="84" x2="70" y2="104" class="fig-line"/><line x1="70" y1="104" x2="62" y2="126" class="fig-line"/><line x1="84" y1="62" x2="86" y2="92" class="fig-line"/><circle cx="86" cy="98" r="6" class="fig-line"/><line x1="132" y1="80" x2="172" y2="80" class="fig-accent"/><line x1="172" y1="80" x2="164" y2="74" class="fig-accent"/><line x1="172" y1="80" x2="164" y2="86" class="fig-accent"/><line x1="140" y1="96" x2="166" y2="96" class="fig-accent"/></svg>`
+"Caminata en cuclillas con mancuernas":`<svg viewBox="0 0 200 140"><circle cx="80" cy="44" r="10" class="fig-head"/><line x1="82" y1="54" x2="88" y2="84" class="fig-line"/><line x1="88" y1="84" x2="112" y2="98" class="fig-line"/><line x1="112" y1="98" x2="110" y2="126" class="fig-line"/><line x1="88" y1="84" x2="70" y2="104" class="fig-line"/><line x1="70" y1="104" x2="62" y2="126" class="fig-line"/><line x1="84" y1="62" x2="86" y2="92" class="fig-line"/><circle cx="86" cy="98" r="6" class="fig-line"/><line x1="132" y1="80" x2="172" y2="80" class="fig-accent"/><line x1="172" y1="80" x2="164" y2="74" class="fig-accent"/><line x1="172" y1="80" x2="164" y2="86" class="fig-accent"/><line x1="140" y1="96" x2="166" y2="96" class="fig-accent"/></svg>`,
+"Curl inclinado con mancuernas":`<svg viewBox="0 0 200 140"><line x1="104" y1="104" x2="74" y2="38" class="fig-bench"/><rect x="98" y="100" width="40" height="8" rx="3" class="fig-bench"/><circle cx="70" cy="28" r="10" class="fig-head"/><line x1="74" y1="38" x2="104" y2="98" class="fig-line"/><line x1="104" y1="98" x2="142" y2="96" class="fig-line"/><line x1="142" y1="96" x2="144" y2="128" class="fig-line"/><line x1="80" y1="50" x2="68" y2="84" class="fig-line"/><line x1="68" y1="84" x2="62" y2="108" class="fig-line"/><circle cx="60" cy="114" r="6" class="fig-line"/><path d="M50 108 A32 32 0 0 1 64 70" class="fig-accent"/><line x1="64" y1="70" x2="56" y2="74" class="fig-accent"/><line x1="64" y1="70" x2="64" y2="79" class="fig-accent"/></svg>`,
+"Press inclinado en Smith":`<svg viewBox="0 0 200 140"><line x1="40" y1="5" x2="40" y2="132" class="fig-bench"/><line x1="160" y1="5" x2="160" y2="132" class="fig-bench"/><line x1="108" y1="112" x2="76" y2="58" class="fig-bench"/><rect x="104" y="108" width="36" height="8" rx="3" class="fig-bench"/><circle cx="74" cy="48" r="9" class="fig-head"/><line x1="80" y1="57" x2="108" y2="104" class="fig-line"/><line x1="108" y1="104" x2="138" y2="100" class="fig-line"/><line x1="138" y1="100" x2="142" y2="128" class="fig-line"/><line x1="86" y1="68" x2="96" y2="50" class="fig-line"/><line x1="96" y1="50" x2="96" y2="30" class="fig-line"/><line x1="40" y1="30" x2="160" y2="30" class="fig-line"/><line x1="178" y1="66" x2="178" y2="34" class="fig-accent"/><line x1="178" y1="34" x2="172" y2="42" class="fig-accent"/><line x1="178" y1="34" x2="184" y2="42" class="fig-accent"/></svg>`,
+"Pullover en polea":`<svg viewBox="0 0 200 140"><circle cx="168" cy="10" r="6" class="fig-bench"/><line x1="164" y1="15" x2="128" y2="58" class="fig-bench"/><circle cx="80" cy="42" r="10" class="fig-head"/><line x1="84" y1="52" x2="96" y2="92" class="fig-line"/><line x1="96" y1="92" x2="88" y2="128" class="fig-line"/><line x1="96" y1="92" x2="106" y2="128" class="fig-line"/><line x1="88" y1="58" x2="128" y2="58" class="fig-line"/><line x1="122" y1="52" x2="134" y2="64" class="fig-line"/><path d="M142 46 A52 52 0 0 1 118 102" class="fig-accent"/><line x1="118" y1="102" x2="119" y2="92" class="fig-accent"/><line x1="118" y1="102" x2="127" y2="97" class="fig-accent"/></svg>`,
+"Pec deck invertido (deltoide posterior)":`<svg viewBox="0 0 200 140"><line x1="100" y1="20" x2="100" y2="120" class="fig-bench"/><rect x="70" y="96" width="34" height="8" rx="3" class="fig-bench"/><circle cx="84" cy="38" r="10" class="fig-head"/><line x1="86" y1="48" x2="88" y2="94" class="fig-line"/><line x1="88" y1="94" x2="70" y2="98" class="fig-line"/><line x1="70" y1="98" x2="72" y2="128" class="fig-line"/><line x1="88" y1="58" x2="44" y2="56" class="fig-line"/><line x1="88" y1="58" x2="132" y2="56" class="fig-line"/><line x1="58" y1="70" x2="30" y2="70" class="fig-accent"/><line x1="30" y1="70" x2="38" y2="64" class="fig-accent"/><line x1="30" y1="70" x2="38" y2="76" class="fig-accent"/><line x1="118" y1="70" x2="146" y2="70" class="fig-accent"/><line x1="146" y1="70" x2="138" y2="64" class="fig-accent"/><line x1="146" y1="70" x2="138" y2="76" class="fig-accent"/></svg>`,
+"Caminata inclinada en cinta":`<svg viewBox="0 0 200 140"><line x1="28" y1="128" x2="166" y2="100" class="fig-bench"/><line x1="162" y1="101" x2="158" y2="48" class="fig-bench"/><line x1="158" y1="50" x2="138" y2="54" class="fig-bench"/><circle cx="96" cy="28" r="10" class="fig-head"/><line x1="96" y1="38" x2="100" y2="80" class="fig-line"/><line x1="100" y1="80" x2="88" y2="98" class="fig-line"/><line x1="88" y1="98" x2="82" y2="114" class="fig-line"/><line x1="100" y1="80" x2="114" y2="96" class="fig-line"/><line x1="114" y1="96" x2="120" y2="108" class="fig-line"/><line x1="98" y1="48" x2="86" y2="68" class="fig-line"/><line x1="98" y1="48" x2="112" y2="66" class="fig-line"/><line x1="40" y1="138" x2="110" y2="124" class="fig-accent"/><line x1="110" y1="124" x2="101" y2="121" class="fig-accent"/><line x1="110" y1="124" x2="104" y2="131" class="fig-accent"/></svg>`
 };
+/* Variantes que comparten dibujo con otro ejercicio */
+EXERCISE_ILLUSTRATIONS["Extensión de tríceps sobre la cabeza con cuerda"] = EXERCISE_ILLUSTRATIONS["Extensión de tríceps unilateral sobre la cabeza"];
+EXERCISE_ILLUSTRATIONS["HIIT en bicicleta (intervalos)"] = EXERCISE_ILLUSTRATIONS["Bicicleta estática"] && EXERCISE_ILLUSTRATIONS["Bicicleta estática"].replace('</svg>','<line x1="10" y1="45" x2="45" y2="45" class="fig-accent"/><line x1="5" y1="62" x2="40" y2="62" class="fig-accent"/><line x1="10" y1="79" x2="42" y2="79" class="fig-accent"/></svg>');
 function classifyExercise(name, group){
   const n = normalizeText(name);
   if(group==='Personalizado' || !group) return null;
@@ -1583,7 +1728,7 @@ function classifyExercise(name, group){
   if(group==='Core') return 'core';
   if(group==='Bíceps') return 'biceps_curl';
   if(group==='Tríceps') return 'triceps_ext';
-  if(group==='Hombro' && (n.includes('elevacion') || n.includes('pajaro') || n.includes('encogimiento'))) return 'shoulder_raise';
+  if(group==='Hombro' && (n.includes('elevacion') || n.includes('pajaro') || n.includes('encogimiento') || n.includes('posterior') || n.includes('invertido'))) return 'shoulder_raise';
   if(group==='Hombro') return 'push_vertical';
   if(group==='Pecho' && n.includes('fondos')) return 'push_vertical';
   if(group==='Pecho') return 'push_horizontal';
@@ -1688,6 +1833,48 @@ const EXERCISE_CUES = {
 "Pasos cortos y controlados, pecho arriba",
 "20 pasos con mancuernas y luego 20 sin mancuernas",
 "Si te molestan las rodillas, sube un poco la altura"
+],
+"Extensión de tríceps sobre la cabeza con cuerda": [
+"De espaldas a la polea, con la cuerda detrás de la cabeza",
+"Codos apuntando al frente, cerca de la cabeza",
+"Baja hasta sentir el estiramiento del tríceps",
+"Extiende sin mover los codos y abre la cuerda arriba"
+],
+"Press inclinado en Smith": [
+"Banco a 30°: más inclinado trabaja más el hombro que el pecho",
+"La barra baja a la parte alta del pecho, bajo las clavículas",
+"Codos a unos 45° del torso, no abiertos en cruz",
+"Escápulas juntas y pegadas al banco"
+],
+"Curl inclinado con mancuernas": [
+"Banco a 45°, espalda y cabeza apoyadas",
+"Deja los brazos colgando atrás: ese estiramiento es lo que hace crecer el bíceps",
+"Sube sin adelantar los codos",
+"Baja lento, en 2-3 segundos, hasta estirar del todo"
+],
+"Pullover en polea": [
+"Polea alta, barra recta o cuerda, inclínate un poco hacia adelante",
+"Brazos casi rectos durante todo el movimiento",
+"Lleva la barra en arco hasta los muslos apretando los dorsales",
+"Sube controlado hasta sentir el estiramiento bajo las axilas"
+],
+"Pec deck invertido (deltoide posterior)": [
+"Siéntate de frente al respaldo de la máquina",
+"Agarres a la altura de los hombros, codos un poco flexionados",
+"Abre los brazos hacia atrás sin juntar demasiado los omóplatos",
+"Peso moderado: el hombro posterior es un músculo pequeño"
+],
+"Caminata inclinada en cinta": [
+"Inclinación 10-12% y 5-6 km/h",
+"No te agarres de la barra: le quita la mitad del trabajo",
+"Ritmo en el que puedas hablar con frases cortas",
+"Pasos naturales, postura erguida"
+],
+"HIIT en bicicleta (intervalos)": [
+"5 min suaves para calentar",
+"30 s a fondo y 90 s suave, 6-8 veces",
+"En los 30 s fuertes, sube la resistencia, no solo la velocidad",
+"Una vez por semana basta; sáltalo si llegas muy cansado"
 ]
 };
 function openTechniqueModal(name, group){
@@ -1710,7 +1897,7 @@ function openTechniqueModal(name, group){
 
 const DAYS = ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"];
 const DAY_LABELS = {lunes:"Lunes",martes:"Martes",miercoles:"Miércoles",jueves:"Jueves",viernes:"Viernes",sabado:"Sábado",domingo:"Domingo"};
-const TIPO_LABELS = {descanso:"Descanso",empuje:"Empuje",tiron:"Tirón",pierna:"Pierna",pecho:"Pecho",espalda:"Espalda",hombro:"Hombro",brazo:"Brazo",core:"Core",cardio:"Cardio",personalizado:"Personalizado"};
+const TIPO_LABELS = {pechoA:"Pecho A",pechoB:"Pecho B",espaldaA:"Espalda A",espaldaB:"Espalda B",piernaA:"Pierna A",piernaB:"Pierna B",descanso:"Descanso",empuje:"Empuje",tiron:"Tirón",pierna:"Pierna",pecho:"Pecho",espalda:"Espalda",hombro:"Hombro",brazo:"Brazo",core:"Core",cardio:"Cardio",personalizado:"Personalizado"};
 function tipoLabel(t){ return TIPO_LABELS[t] || capitalize(t); }
 
 /* ============ ESTADO ============ */
@@ -1825,11 +2012,12 @@ document.getElementById('obSaveBtn').addEventListener('click',()=>{
 const TRAINING_RECS = {
   recomposicion:{
     titulo:"Recomposición — ganar músculo y bajar grasa",
-    frecuencia:"5-6 días/semana con tu split de pecho, espalda y pierna (x2)",
-    series:"12-18 series efectivas por grupo muscular a la semana",
-    reps:"6-12 repeticiones, últimas series a RIR 0-2",
-    descanso:"2 min en compuestos, 60-90 s en aislados",
-    cardio:"8.000-10.000 pasos diarios; cardio extra opcional (2 x 20 min suave)",
+    frecuencia:"6 días: pecho, espalda y pierna, cada uno con un día A (fuerza) y uno B (volumen)",
+    series:"12-18 series efectivas por grupo muscular a la semana, ~18 por sesión",
+    reps:"6-15 repeticiones según el ejercicio, dejando 1-2 en reserva (RIR 1-2)",
+    descanso:"2-3 min en compuestos, 60-90 s en aislados",
+    cardio:"8.000-10.000 pasos diarios + cardio después de pesas: lun 25 min inclinada, mar 20 min suave, jue 15 min intervalos. Nunca en días de pierna",
+    descarga:"Cada 6-8 semanas: 1 semana con la mitad de las series y RIR 4-5",
     calorico:"Déficit pequeño (~10% bajo mantenimiento) con 2,2 g/kg de proteína",
     nota:"La báscula se mueve poco: mide tu cintura cada 2 semanas. Si baja y tu fuerza sube, vas perfecto."
   },
@@ -1886,6 +2074,7 @@ function renderTrainingRecs(){
     ['Cardio', r.cardio],
     ['Calorías', r.calorico]
   ];
+  if(r.descarga) rows.splice(4, 0, ['Semana de descarga', r.descarga]);
   box.innerHTML = `
     <div style="font-weight:700; font-size:15px; margin-bottom:8px; color:var(--lime);">${r.titulo}</div>
     ${rows.map(([label,val])=>`
@@ -2441,7 +2630,7 @@ function renderMealItems(){
     <div class="food-search-item">
       <div>
         <div class="n">${escapeHtml(it.name)}</div>
-        <div class="m">${it.grams}g · ${Math.round(it.kcal)} kcal${it.fib?' · '+Math.round(it.fib*10)/10+'g fibra':''}</div>
+        <div class="m">${it.portion?escapeHtml(it.portion)+' · ':''}${it.grams}${it.unit==='ml'?' ml':'g'} · ${Math.round(it.kcal)} kcal${it.fib?' · '+Math.round(it.fib*10)/10+'g fibra':''}</div>
       </div>
       <button class="btn btn-sm btn-danger" onclick="removeMealItem(${idx})">✕</button>
     </div>
@@ -2503,12 +2692,196 @@ foodAutocomplete.addEventListener('click',(e)=>{
   }
   const foodName = item.dataset.food;
   const food = FOOD_DB.find(f=>f.n===foodName);
-  const grams = parseFloat(prompt('¿Cuántos gramos de "'+food.n+'"?', '100')) || 100;
-  const factor = grams/100;
-  mealItems.push({name:food.n, grams, kcal:food.kcal*factor, p:food.p*factor, c:food.c*factor, f:food.f*factor, fib:food.fib*factor, sug:food.sug*factor, sod:food.sod*factor});
-  renderMealItems(); recalcTotalsFromItems();
   foodSearchInput.value=''; foodAutocomplete.classList.remove('open');
+  openPortionPicker(food);
+});
+
+/* ============ PORCIONES CASERAS (para registrar sin pesar) ============
+   Gramos aproximados de medidas caseras en Colombia (cocido / listo para comer).
+   Orden importa: la primera regla que coincide gana, por eso las específicas van primero. */
+const PORTION_RULES = [
+  /* Tus productos: porciones de la etiqueta */
+  [/fiocco/, [["½ vaso",100],["1 vaso",200],["1 vaso grande",300]], 'ml'],
+  [/nestum/, [["½ porción",95],["1 porción (¾ taza)",190]]],
+  [/iso whey/, [["1 porción (3 scoops)",34],["1 scoop",11.3],["2 scoops",22.7]]],
+  [/creatina/, [["1 cuchara (5 g)",5]]],
+  [/eaa/, [["1 cuchara medidora",18],["½ cuchara",9]]],
+  [/kellogg|corn flakes|zucosos|krispis|all-bran/, [["½ taza",15],["1 taza",30],["1 taza y ½",45]]],
+  [/margarita|detodito|platanitos|super ricas|choclitos|doritos|jacks|cheetos|yupi/, [["1 paquete personal",30],["1 paquete mediano",60],["1 puñado",15]]],
+  [/ducales|saltin|festival|coquitos|wafer|tosh|melva/, [["1 galleta",7],["4 galletas",28],["1 paquete individual",30]]],
+  [/ponque|chocorramo|brownie/, [["½ unidad",30],["1 unidad",60]]],
+  [/bon bon bum/, [["1 bombón",24]]],
+  [/bocadillo/, [["1 bocadillo",30],["2 bocadillos",60]]],
+  [/frunas surtidas/, [["1 fruna",6],["5 frunas",30]]],
+  [/\bjet\b|chocobreak|coco lack/, [["1 chocolatina pequeña",12],["1 chocolatina grande",50]]],
+  [/oblea/, [["1 oblea",60]]],
+  [/arequipe|nucita/, [["1 cucharadita",7],["1 cucharada",20],["2 cucharadas",40]]],
+  [/helado|boggy/, [["1 paleta",60]]],
+  [/avena alpin|alqueria avena|kumis|yogo yogo|bon yurt|regeneris|yogurt fresa/, [["1 vasito",150],["1 vaso",200],["1 botella personal",250]], 'ml'],
+  [/yogur/, [["2 cucharadas",30],["½ taza",120],["1 vasito",150]]],
+  [/aguapanela/, [["1 taza",200],["1 vaso",250]], 'ml'],
+  [/nescafe/, [["1 cucharadita",2],["2 cucharaditas",4]]],
+  [/milo|chocolisto/, [["1 cucharada",8],["3 cucharadas (1 vaso)",24]]],
+  [/chocolate corona/, [["1 pastilla (1 taza)",25],["2 pastillas",50]]],
+  [/cafe/, [["1 tinto (pocillo)",120],["1 taza",240]], 'ml'],
+  [/cerveza/, [["1 lata o botella",330],["2 cervezas",660]], 'ml'],
+  [/aguardiente/, [["1 trago",30],["3 tragos",90]], 'ml'],
+  [/vino/, [["1 copa",150],["2 copas",300]], 'ml'],
+  [/gatorade/, [["½ botella",250],["1 botella",500]], 'ml'],
+  [/coca-cola|postobon|\bhit\b|del valle|pony|hatsu|jugo|agua cristal|agua con gas/, [["1 vaso",250],["1 lata",350],["1 botella personal",400]], 'ml'],
+  [/leche|parmalat/, [["½ vaso",125],["1 vaso",250],["1 taza",240]], 'ml'],
+  [/queso parmesano/, [["1 cucharada rallado",5],["3 cucharadas",15]]],
+  [/queso crema/, [["1 cucharada",15],["2 cucharadas",30]]],
+  [/requeson|cottage/, [["¼ taza",55],["½ taza",110]]],
+  [/suero/, [["1 cucharada",15],["2 cucharadas",30]]],
+  [/queso/, [["1 tajada delgada",20],["1 tajada gruesa",35],["2 tajadas gruesas",70]]],
+  [/mantequilla de mani/, [["1 cucharadita",5],["1 cucharada",16],["2 cucharadas",32]]],
+  [/mantequilla/, [["1 cucharadita",5],["1 cucharada",14]]],
+  [/atun/, [["½ lata escurrida",55],["1 lata escurrida",110]]],
+  [/aceite/, [["1 cucharadita",4.5],["1 cucharada",13.5],["2 cucharadas",27]]],
+  [/almendras|\bmani\b|nueces/, [["1 puñado pequeño",15],["1 puñado",30]]],
+  [/chia|linaza/, [["1 cucharadita",4],["1 cucharada",12],["2 cucharadas",24]]],
+  [/proteina en polvo|whey/, [["½ porción",15],["1 porción (≈30 g)",30],["2 porciones",60]]],
+  [/miel/, [["1 cucharadita",7],["1 cucharada",21]]],
+  [/azucar/, [["1 cucharadita",4],["1 cucharada",12]]],
+  [/panela/, [["1 cucharada rallada",12],["1 trozo pequeño",30]]],
+  [/salsa de tomate/, [["1 cucharada",15],["2 cucharadas",30]]],
+  [/chocolate negro/, [["1 cuadrito",10],["2 cuadritos",20],["4 cuadritos",40]]],
+  [/granola/, [["2 cucharadas",15],["⅓ taza",30],["½ taza",45],["1 taza",90]], 'g', 1],
+  [/avena/, [["2 cucharadas",15],["½ taza",40],["1 taza",80]]],
+  [/arepa de huevo/, [["1 arepa de huevo",150]]],
+  [/arepa de choclo/, [["½ arepa",50],["1 arepa",100]]],
+  [/arepa boyacense/, [["1 arepa",90]]],
+  [/arepa/, [["1 arepa delgada",50],["1 arepa mediana",80],["1 arepa gruesa",120]]],
+  [/empanada/, [["1 empanada",70],["2 empanadas",140],["3 empanadas",210]]],
+  [/pandebono/, [["1 pandebono",40],["2 pandebonos",80]]],
+  [/bunuelo/, [["1 buñuelo",40],["2 buñuelos",80]]],
+  [/tamal/, [["½ tamal",225],["1 tamal",450]]],
+  [/envuelto/, [["1 envuelto",100]]],
+  [/lechona/, [["½ porción",125],["1 porción",250]]],
+  [/bandeja paisa/, [["½ bandeja",300],["1 bandeja completa",600]]],
+  [/ajiaco|sancocho|mondongo|cuchuco|caldo|changua/, [["½ plato",200],["1 plato hondo",400]]],
+  [/mazamorra/, [["½ vaso",125],["1 vaso",250]]],
+  [/frijoles con garra/, [["1 cucharón",110],["1 porción (1 taza)",220]]],
+  [/sobrebarriga sudada/, [["½ porción",75],["1 porción",150]]],
+  [/aborrajado/, [["1 aborrajado",120]]],
+  [/patacon/, [["1 patacón",40],["2 patacones",80],["3 patacones",120]]],
+  [/pan de hamburguesa/, [["1 pan",60]]],
+  [/hamburguesa/, [["1 hamburguesa",230]]],
+  [/pizza/, [["1 porción",110],["2 porciones",220]]],
+  [/crepe/, [["1 crepe",280]]],
+  [/frisby|pollo apanado/, [["1 presa mediana",120],["2 presas",240]]],
+  [/kokoriko|pollo entero asado/, [["1 presa",130],["¼ de pollo",200]]],
+  [/papa criolla/, [["5 papas criollas",125],["10 papas criollas",250]]],
+  [/papa/, [["1 papa pequeña",100],["1 papa mediana",150],["1 papa grande",220]]],
+  [/batata|camote/, [["½ batata mediana",65],["1 batata mediana",130]]],
+  [/yuca/, [["1 trozo pequeño",70],["1 trozo mediano",120],["1 trozo grande",180]]],
+  [/platano maduro/, [["1 tajada",40],["2 tajadas",80],["3 tajadas",120]]],
+  [/platano/, [["½ plátano",90],["1 plátano",180]]],
+  [/arroz/, [["½ taza",80],["1 taza (1 puño)",160],["2 tazas",320]]],
+  [/pasta|cuscus/, [["½ taza",70],["1 taza (1 puño)",140],["2 tazas",280]]],
+  [/quinua/, [["½ taza",90],["1 taza",185]]],
+  [/frijoles|lentejas|garbanzos/, [["1 cucharón (½ taza)",90],["1 taza",175]]],
+  [/tortilla/, [["1 tortilla",30],["2 tortillas",60]]],
+  [/\bpan\b/, [["1 tajada",25],["2 tajadas",50],["3 tajadas",75]]],
+  [/maiz dulce/, [["½ taza",80],["1 taza",160]]],
+  [/clara/, [["1 clara",33],["3 claras",100],["½ taza",120]]],
+  [/huevo/, [["1 huevo",50],["2 huevos",100],["3 huevos",150]]],
+  [/pechuga/, [["½ palma",55],["1 palma",110],["½ pechuga",100],["1 pechuga entera",200]]],
+  [/alas de pollo/, [["1 ala",35],["4 alas",140],["6 alas",210]]],
+  [/muslo|piernas de pollo/, [["1 presa (sin hueso)",90],["2 presas",180]]],
+  [/salmon|tilapia/, [["1 filete pequeño",100],["1 filete mediano",150]]],
+  [/camarones/, [["½ taza",70],["1 taza",145]]],
+  [/tofu/, [["½ palma",55],["1 palma",110],["1 taza en cubos",250]]],
+  [/molida/, [["½ palma",55],["1 palma",110],["1 hamburguesa casera",120]]],
+  [/salchicha/, [["1 salchicha",45],["2 salchichas",90]]],
+  [/jamon/, [["1 tajada",20],["2 tajadas",40],["4 tajadas",80]]],
+  [/mortadela|salchichon/, [["2 tajadas",20],["5 tajadas",50]]],
+  [/chorizo/, [["1 chorizo",70],["2 chorizos",140]]],
+  [/butifarra/, [["1 butifarra",25],["4 butifarras",100]]],
+  [/morcilla/, [["1 rodaja",40],["1 morcilla",100]]],
+  [/tocineta|tocino/, [["1 tira",10],["3 tiras",30]]],
+  [/chicharron/, [["1 trozo pequeño",40],["1 trozo mediano",80]]],
+  [/banano/, [["1 banano pequeño",90],["1 banano mediano",120]]],
+  [/manzana/, [["½ manzana",90],["1 manzana mediana",180]]],
+  [/\bpera\b/, [["1 pera mediana",170]]],
+  [/naranja/, [["1 naranja mediana",130],["1 vaso de jugo",250]]],
+  [/kiwi/, [["1 kiwi",75],["2 kiwis",150]]],
+  [/limon/, [["Jugo de 1 limón",30],["1 limón",60]]],
+  [/aguacate/, [["1 tajada",30],["½ aguacate Hass",70],["¼ aguacate grande",80]]],
+  [/fresas|uvas|mora|pina|mango|papaya|sandia|melon/, [["½ taza",75],["1 taza en trozos",150],["1 plato (2 tazas)",300]]],
+  [/espinaca|lechuga/, [["1 taza",35],["2 tazas",70]]],
+  [/tomate/, [["½ tomate",60],["1 tomate mediano",120]]],
+  [/zanahoria/, [["½ zanahoria",30],["1 zanahoria mediana",60],["1 taza rallada",110]]],
+  [/cebolla/, [["2 cucharadas picada",20],["½ cebolla",55]]],
+  [/\bajo\b/, [["1 diente",3],["3 dientes",9]]],
+  [/pimenton/, [["¼ pimentón",30],["½ pimentón",60]]],
+  [/pepino/, [["½ taza en rodajas",60],["1 pepino mediano",200]]],
+  [/brocoli|coliflor|calabacin|champinones/, [["½ taza",75],["1 taza",150]]]
+];
+/* Si no hay regla: porción según el tipo de alimento (método de la mano) */
+function portionsFor(food){
+  const n = normalizeText(food.n);
+  for(const [re, opts, unit, def] of PORTION_RULES){ if(re.test(n)) return {opts, unit:unit||'g', def}; }
+  if(food.p >= 12) return {opts:[["½ palma",55],["1 palma",110],["1 porción grande",170]], unit:'g'};
+  if(food.f >= 40) return {opts:[["1 cucharadita",5],["1 cucharada",14]], unit:'g'};
+  if(food.c >= 15) return {opts:[["½ taza",80],["1 taza (1 puño)",160]], unit:'g'};
+  return {opts:[["½ taza",75],["1 taza",150]], unit:'g'};
+}
+let portionFood = null, portionOpts = [], portionUnit = 'g', portionSel = 0, portionQty = 1;
+function fmtQty(q){ const w = Math.floor(q), h = q - w >= 0.5; return (w ? w : '') + (h ? (w ? ' ½' : '½') : '') || '0'; }
+function fmtGrams(g){ return Math.round(g*10)/10; }
+function openPortionPicker(food){
+  portionFood = food;
+  const res = portionsFor(food);
+  portionOpts = res.opts; portionUnit = res.unit;
+  portionSel = (res.def!=null) ? res.def : portionOpts.findIndex(o=>/^1 /.test(o[0])); if(portionSel<0) portionSel = 0;
+  portionQty = 1;
+  document.getElementById('portionTitle').textContent = food.n;
+  document.getElementById('portionSub').textContent = `${food.kcal} kcal por 100 ${portionUnit}`;
+  document.getElementById('portionGramsLabel').textContent = portionUnit==='ml' ? 'Mililitros (si los sabes)' : 'Gramos (si los sabes)';
+  renderPortionChips();
+  syncPortionGrams();
+  openModal('modalPortion');
+}
+function renderPortionChips(){
+  document.getElementById('portionChips').innerHTML = portionOpts.map((o,i)=>
+    `<button type="button" class="portion-chip ${i===portionSel?'active':''}" onclick="selectPortion(${i})"><b>${o[0]}</b><small>${fmtGrams(o[1])} ${portionUnit}</small></button>`).join('');
+  document.getElementById('portionQtyRow').classList.toggle('muted', portionSel<0);
+  document.getElementById('qtyVal').textContent = fmtQty(portionQty);
+}
+function selectPortion(i){ portionSel = i; renderPortionChips(); syncPortionGrams(); }
+function changePortionQty(d){
+  portionQty = Math.max(0.5, Math.min(10, portionQty + d));
+  if(portionSel<0) portionSel = 0;
+  renderPortionChips(); syncPortionGrams();
+}
+function syncPortionGrams(){
+  if(portionSel>=0) document.getElementById('portionGrams').value = fmtGrams(portionOpts[portionSel][1]*portionQty);
+  updatePortionResult();
+}
+function portionGramsValue(){ return parseFloat(String(document.getElementById('portionGrams').value).replace(',','.'))||0; }
+function updatePortionResult(){
+  const f = portionFood, k = portionGramsValue()/100;
+  document.getElementById('portionResult').innerHTML = f ? `<b>${Math.round(f.kcal*k)} kcal</b><span>${Math.round(f.p*k)} g prot</span><span>${Math.round(f.c*k)} g carb</span><span>${Math.round(f.f*k)} g grasa</span>` : '';
+  document.getElementById('portionAddBtn').disabled = !(portionGramsValue()>0);
+}
+document.getElementById('portionGrams').addEventListener('input',()=>{
+  portionSel = -1; renderPortionChips(); updatePortionResult();
+});
+document.getElementById('qtyMinus').addEventListener('click',()=>changePortionQty(-0.5));
+document.getElementById('qtyPlus').addEventListener('click',()=>changePortionQty(0.5));
+document.getElementById('portionAddBtn').addEventListener('click',()=>{
+  const food = portionFood, grams = portionGramsValue();
+  if(!food || !(grams>0)) return;
+  const factor = grams/100;
+  const lbl = portionSel>=0 ? portionOpts[portionSel][0] : '';
+  const portion = !lbl ? '' : (portionQty===1 ? lbl : `${fmtQty(portionQty)} × ${lbl.replace(/^1 /,'')}`);
+  mealItems.push({name:food.n, grams:fmtGrams(grams), unit:portionUnit, portion, kcal:food.kcal*factor, p:food.p*factor, c:food.c*factor, f:food.f*factor, fib:food.fib*factor, sug:food.sug*factor, sod:food.sod*factor});
+  renderMealItems(); recalcTotalsFromItems();
   if(!document.getElementById('mealName').value){ document.getElementById('mealName').value = "Plato manual"; }
+  closeModal('modalPortion');
+  toast(`Agregado: ${food.n}`);
 });
 
 /* Foto: captura / galería */
@@ -2636,8 +3009,9 @@ document.querySelectorAll('.tab-btn[data-gymtab]').forEach(btn=>{
   });
 });
 
-const TRAINING_PLAN_VERSION = 2;
+const TRAINING_PLAN_VERSION = 3;
 function applyRecommendedPlan(){
+  if(state.routinePlan) state.routinePlanPrev = JSON.parse(JSON.stringify(state.routinePlan));
   state.routinePlan = buildDefaultRoutinePlan();
   const t = todayISO();
   const sess = state.sessions[t];
@@ -2693,7 +3067,8 @@ function renderSessionHoy(){
   document.getElementById('finishSessionBtn').style.display='block';
   const progressHtml = `<div class="sess-progress"><div class="sp-top"><span id="sessCount"></span><b id="sessPct">0%</b></div><div class="macro-bar-bg"><div class="macro-bar-fill" id="sessBar" style="width:0%"></div></div></div>`;
   box.innerHTML = progressHtml + sess.exercises.map((ex,exi)=>{
-    const planEx = plan.ejercicios[exi] || {reps:'-',peso:0};
+    const planEx = (plan.ejercicios[exi] && plan.ejercicios[exi].name===ex.name) ? plan.ejercicios[exi]
+      : (plan.ejercicios.find(p=>p.name===ex.name) || {reps:'-',peso:0,series:ex.series.length});
     const suggestion = progressionSuggestion(ex.name, t);
     const lastTxt = lastTimeText(ex.name, t);
     return `
@@ -2704,7 +3079,7 @@ function renderSessionHoy(){
           <button class="info-btn" onclick='openTechniqueModal(${JSON.stringify(ex.name).replace(/'/g,"&#39;")}, ${JSON.stringify(planEx.group||"").replace(/'/g,"&#39;")})' title="Ver técnica">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
           </button>
-          <span class="ex-meta">${planEx.series||ex.series.length} × ${planEx.reps}${planEx.peso>0?' · '+planEx.peso+'kg':''}</span>
+          <span class="ex-meta">${setsRepsText(planEx.series||ex.series.length, planEx.reps)}${planEx.peso>0?' · '+planEx.peso+'kg':''}</span>
         </div>
       </div>
       ${planEx.notas ? `<div style="font-size:12px; color:var(--text-dim); margin-bottom:6px; line-height:1.4;">${escapeHtml(planEx.notas)}</div>` : ''}
@@ -2723,6 +3098,11 @@ function renderSessionHoy(){
     </div>`;
   }).join('');
   updateSessionProgress();
+}
+/* "4 × 6-8", "3 × 45 s" o solo "25 min" para el cardio */
+function setsRepsText(series, reps){
+  const r = String(reps);
+  return /min/.test(r) ? r : `${series} × ${r}`;
 }
 function updateSessionProgress(){
   const ses = state.sessions[todayISO()];
@@ -2809,8 +3189,8 @@ function renderDeloadBanner(){
   const dismissedAt = state.deloadDismissedAt;
   if(dismissedAt && daysSince(dismissedAt) < 14){ banner.style.display='none'; return; }
   const streak = intenseWeeksStreak();
-  if(streak >= 5){
-    document.getElementById('deloadText').textContent = `Llevas ${streak} semanas seguidas entrenando 5+ días. Tu cuerpo necesita recuperarse: considera una semana de descarga (baja el volumen o el peso ~40-50%, o descansa unos días extra) antes de seguir subiendo cargas.`;
+  if(streak >= 6){
+    document.getElementById('deloadText').textContent = `Llevas ${streak} semanas seguidas entrenando 5+ días. Esta semana entrena suave para recuperarte: mismos días y ejercicios, pero la mitad de las series, el mismo peso o un poco menos, y terminando cada serie con 4-5 repeticiones en reserva. Sin intervalos. La semana siguiente vuelves a tu rutina normal, más descansado y más fuerte.`;
     banner.style.display='block';
   } else {
     banner.style.display='none';
@@ -2885,7 +3265,7 @@ function renderWeekEditor(){
     const plan = state.routinePlan[d];
     return `<div class="day-cell ${d===todayKey?'today':''} ${plan.tipo==='descanso'?'rest':''}" onclick="selectEditDay('${d}')">
       <div class="d">${DAY_LABELS[d].slice(0,3)}</div>
-      <div class="t">${plan.tipo==="descanso"?"Desc.":tipoLabel(plan.tipo)}</div>
+      <div class="t">${plan.tipo==="descanso"?"Desc.":(/^(pecho|espalda|pierna)[AB]$/.test(plan.tipo) ? `${tipoLabel(plan.tipo).slice(0,-2)}<span class="ab">${plan.tipo.slice(-1)}</span>` : tipoLabel(plan.tipo))}</div>
     </div>`;
   }).join('');
   const sel = document.getElementById('daySelector');
@@ -2927,7 +3307,7 @@ function renderDayExercises(){
           <button class="btn btn-sm btn-danger" onclick="removeExercise(${idx})">✕</button>
         </div>
       </div>
-      <div class="ex-meta">${ex.series} series × ${ex.reps} reps${ex.peso>0?' · '+ex.peso+'kg':''}${ex.notas?(' · '+escapeHtml(ex.notas)):''}</div>
+      <div class="ex-meta">${/min/.test(String(ex.reps)) ? ex.reps : ex.series+' series × '+ex.reps+(/s$/.test(String(ex.reps))?'':' reps')}${ex.peso>0?' · '+ex.peso+'kg':''}${ex.notas?(' · '+escapeHtml(ex.notas)):''}</div>
     </div>
   `).join('');
 }
@@ -3474,6 +3854,15 @@ function applyPendingMigrations(){
     state.recompSetupV1 = true;
     computeGoals();
     changed = true; msgs.push('Plan: Recomposición, '+state.goals.kcal.toLocaleString('es-CO')+' kcal y '+state.goals.p+' g de proteína');
+  }
+  // 3) Rutina A/B con cardio y abdomen, pedida por el usuario (se guarda copia de la anterior)
+  if(state.onboarded && (state.trainingPlanVersion||1) < TRAINING_PLAN_VERSION){
+    state.routinePlanPrev = JSON.parse(JSON.stringify(state.routinePlan||{}));
+    state.routinePlan = buildDefaultRoutinePlan();
+    const t = todayISO(), ses = state.sessions && state.sessions[t];
+    if(ses && !ses.completed && !ses.exercises.some(ex=>ex.series.some(se=>se.done))) delete state.sessions[t];
+    state.trainingPlanVersion = TRAINING_PLAN_VERSION;
+    changed = true; msgs.push('Rutina nueva cargada: días A y B con cardio y abdomen');
   }
   if(changed) save();
   if(msgs.length) setTimeout(()=>toast(msgs[0]), 900);
