@@ -48,7 +48,8 @@
   --shadow:0 8px 24px rgba(20,40,30,.08);
 }
 *{box-sizing:border-box; margin:0; padding:0;}
-html,body{height:100%;}
+html{min-height:100%;}
+body{min-height:100%;}
 body{
   background:var(--bg);
   color:var(--text);
@@ -337,7 +338,8 @@ canvas{max-width:100%;}
 body::before{content:''; position:fixed; left:0; right:0; top:0; height:75vh; pointer-events:none; z-index:-1;
   background:radial-gradient(70% 55% at 8% -6%, rgba(198,241,53,.11), transparent 70%), radial-gradient(55% 45% at 106% 14%, rgba(79,217,208,.08), transparent 70%);}
 body[data-theme="light"]::before{opacity:.6;}
-body{padding-bottom:calc(118px + env(safe-area-inset-bottom));}
+body{padding-bottom:0;}
+main{padding-bottom:calc(112px + env(safe-area-inset-bottom));}
 .topbar{padding:calc(14px + env(safe-area-inset-top)) 18px 10px; background:linear-gradient(180deg,var(--bg) 62%,transparent);}
 .brand-name{font-family:var(--font-display); font-style:italic; font-weight:800; font-size:26px; letter-spacing:.01em;}
 .section-title{font-family:var(--font-display); font-weight:800; font-size:36px; line-height:1; letter-spacing:.005em; margin:4px 0 16px;}
@@ -346,6 +348,10 @@ body[data-theme="light"] .card{box-shadow:0 6px 20px rgba(20,40,30,.06);}
 .card-title{text-transform:none; letter-spacing:-.005em; font-size:15px; font-weight:600; color:var(--text); margin-bottom:12px;}
 .stat-card{background:linear-gradient(180deg,var(--card-hi),transparent 50%),var(--card); border:1px solid var(--line); border-radius:18px;}
 .stat-card .num{font-size:34px; line-height:1;}
+.stat-card{min-width:0;}
+#view-perfil .stat-card{padding:12px 4px;}
+#view-perfil .stat-card .num{font-size:24px;}
+main{overflow-x:clip;}
 .btn{transition:transform .12s ease, background .2s ease, box-shadow .2s ease;}
 .btn:active{transform:scale(.97);}
 .btn-accent{background:linear-gradient(180deg,#D6FB52,#B9E62B); color:#0A0E0D; box-shadow:0 6px 18px var(--glow-lime), inset 0 1px 0 rgba(255,255,255,.4); font-weight:700;}
@@ -431,7 +437,7 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
 
 /* Ajustes para pantallas muy angostas (iPhone SE, Android compactos ~360-380px) */
 @media (max-width: 380px){
-  main{padding:0 12px;}
+  main{padding-left:12px; padding-right:12px;}
   .card{padding:14px;}
   .section-title{font-size:20px;}
   .stat-card .num{font-size:20px;}
