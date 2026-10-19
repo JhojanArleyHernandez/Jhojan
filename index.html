@@ -359,6 +359,31 @@ canvas{max-width:100%;}
 .fig-head{fill:var(--text);}
 .fig-bench{stroke:var(--text-faint); stroke-width:3; fill:none;}
 .fig-wrap{background:var(--card-2); border-radius:14px; padding:10px; margin-bottom:14px;}
+/* ANIMACIONES DE TÉCNICA */
+.xa-svg{width:100%; height:auto; display:block;}
+.xa-skin{fill:var(--text); stroke:var(--text); stroke-width:1.5; stroke-linejoin:round;}
+.xa-limb{stroke:var(--text); stroke-linecap:round; fill:none;}
+.xa-far{opacity:.42;}
+.xa-eq{fill:var(--card); stroke:var(--text-dim); stroke-width:2.2;}
+.xa-hub{fill:var(--text-dim);}
+.xa-eqline{stroke:var(--text-dim); stroke-linecap:round;}
+.xa-cable{stroke:var(--text-faint); stroke-dasharray:3 2;}
+.xa-hl{fill:var(--lime);}
+.xa-ground{stroke:var(--text-faint); stroke-width:2;}
+.xa-bench{fill:none; stroke:var(--text-faint); stroke-width:2.5;}
+.xa-benchleg{stroke:var(--text-faint); stroke-width:2.5; stroke-linecap:round;}
+.xa-pad{stroke:var(--text-faint); stroke-linecap:round; fill:none;}
+.xa-pad2{fill:var(--card); stroke:var(--text-faint); stroke-width:2;}
+.xa-rail{stroke:var(--text-faint); stroke-width:1.6; opacity:.7;}
+.xa-speed{stroke:var(--lime); stroke-width:2.5; stroke-linecap:round; opacity:.6;}
+.xa-bar{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px;}
+.xa-tempo{font-size:12px; color:var(--text-dim); line-height:1.35; min-width:0;}
+.xa-btns{display:flex; gap:6px; flex-shrink:0;}
+.xa-btn{border:1px solid var(--border); background:var(--card); color:var(--text); border-radius:9px; padding:7px 11px; font-size:12px; font-weight:700;}
+.xa-btn.on{border-color:var(--lime); color:var(--lime);}
+.xa-note{font-size:11.5px; color:var(--text-faint); margin-top:6px;}
+.xa-video{display:flex; align-items:center; justify-content:center; width:100%; margin:0 0 16px; text-decoration:none;}
+
 .info-btn{background:none; border:none; color:var(--text-faint); width:22px; height:22px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;}
 .info-btn svg{width:18px; height:18px;}
 .measure-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px;}
@@ -1185,9 +1210,10 @@ body[data-theme="light"] .stat-card.streak .num{color:#6E9000;}
     <div class="modal-handle"></div>
     <div class="modal-head"><h3 id="techName">Ejercicio</h3><button class="modal-close" data-close="modalTechnique">✕</button></div>
     <div class="fig-wrap" id="techFigWrap"></div>
+    <a id="techVideoLink" class="btn btn-ghost btn-block xa-video" href="#" target="_blank" rel="noopener">▶ Ver video real en YouTube</a>
     <div class="card-title" style="margin-top:0;">Puntos clave de técnica</div>
     <ul id="techCues" style="padding-left:20px; font-size:13.5px; line-height:1.9; color:var(--text);"></ul>
-    <p style="font-size:11.5px; color:var(--text-faint); margin-top:8px;">Ilustración esquemática de referencia — no reemplaza la guía de un entrenador presencial, especialmente si eres nuevo en el ejercicio.</p>
+    <p style="font-size:11.5px; color:var(--text-faint); margin-top:8px;">Animación de referencia: no reemplaza la guía de un entrenador presencial, sobre todo si es tu primera vez con el ejercicio.</p>
   </div>
 </div>
 
@@ -1425,7 +1451,7 @@ const EXERCISE_DB = [
 ["Extensión de tríceps sobre la cabeza con cuerda","Tríceps"],["Press inclinado en Smith","Pecho"],
 ["Curl inclinado con mancuernas","Bíceps"],["Pullover en polea","Espalda"],
 ["Pec deck invertido (deltoide posterior)","Hombro"],["Caminata inclinada en cinta","Cardio"],
-["HIIT en bicicleta (intervalos)","Cardio"]
+["HIIT en bicicleta (intervalos)","Cardio"],["Cruce de poleas de abajo hacia arriba","Pecho"]
 ].map(e=>({n:e[0],g:e[1]}));
 
 /* Rutinas sugeridas por defecto según el tipo de día (el usuario puede editarlas libremente) */
@@ -1433,9 +1459,9 @@ const DEFAULT_ROUTINES = {
   /* Plan recomendado v3: mismo split del usuario con día A (fuerza) y B (volumen).
      ~18 series por sesión, prioridad a brazos, hombro lateral y pecho alto; cardio después de pesas
      solo en días de tren superior; abdomen 4 días. */
-  pechoA:[["Press de banca","Pecho",4,"6-8",0,"Calienta con 2 series ligeras. Descanso 2-3 min. Cuando completes 8 reps en las 4 series, sube el peso"],
-    ["Press inclinado con mancuernas","Pecho",3,"8-10",0,"Descanso 2 min"],
-    ["Peck deck (contractora)","Pecho",2,"12-15",0,"Aprieta 1 s al cerrar. Descanso 90 s"],
+  pechoA:[["Press inclinado con mancuernas","Pecho",4,"6-8",0,"Va primero porque el pecho alto es tu prioridad. Banco a 30°. Calienta con 2 series ligeras. Descanso 2-3 min"],
+    ["Press de banca","Pecho",3,"6-8",0,"Descanso 2-3 min. Cuando completes 8 reps en las 3 series, sube el peso"],
+    ["Cruce de poleas de abajo hacia arriba","Pecho",3,"12-15",0,"Pecho alto: sube en arco hasta juntar las manos a la altura de la barbilla y aprieta 1 s"],
     ["Elevación lateral unilateral","Hombro",4,"12-15",0,"Por brazo. Es tu prioridad para la forma en V. Descanso 60 s"],
     ["Extensión de tríceps sobre la cabeza con cuerda","Tríceps",3,"10-12",0,"Trabaja el tríceps estirado, la posición que más lo hace crecer"],
     ["Jalón de tríceps con cuerda","Tríceps",2,"12-15",0,"Última serie: drop set (baja 50% del peso y sigue al fallo)"],
@@ -1457,11 +1483,12 @@ const DEFAULT_ROUTINES = {
     ["Curl femoral","Pierna",3,"10-12",0],
     ["Elevación de gemelos en máquina","Pierna",3,"12-15",0,"Pausa de 1 s abajo, estirando el gemelo"]],
   pechoB:[["Press inclinado en Smith","Pecho",4,"8-10",0,"Primero el pecho alto, que es lo que más se nota. Banco a 30°. Descanso 2 min"],
-    ["Press con mancuernas plano","Pecho",3,"10-12",0,"Descanso 90 s"],
-    ["Cruce de poleas","Pecho",2,"12-15",0,"Aprieta 1 s al juntar las manos"],
+    ["Cruce de poleas de abajo hacia arriba","Pecho",3,"12-15",0,"Pecho alto: sube en arco hasta la barbilla y aprieta 1 s"],
+    ["Press con mancuernas plano","Pecho",3,"10-12",0,"Descanso 90 s. Junta un poco las mancuernas arriba sin chocarlas"],
+    ["Peck deck (contractora)","Pecho",2,"12-15",0,"Centro del pecho: cierra del todo y aprieta 2 s en cada repetición. Peso moderado"],
     ["Elevación lateral por detrás del cuerpo (polea)","Hombro",4,"12-15",0,"Por brazo. Descanso 60 s"],
     ["Extensión de tríceps unilateral sobre la cabeza","Tríceps",3,"10-12",0,"Por brazo, en polea baja. Baja hasta sentir el estiramiento"],
-    ["Jalón de tríceps con barra","Tríceps",3,"10-12",0,"Última serie: drop set"],
+    ["Jalón de tríceps con barra","Tríceps",2,"10-12",0,"Última serie: drop set"],
     ["Rueda abdominal","Core",3,"10",0,"Desde las rodillas. Avanza solo hasta donde mantengas la espalda recta"],
     ["Plancha (plank)","Core",3,"45 s",0],
     ["HIIT en bicicleta (intervalos)","Cardio",1,"15 min",0,"30 s fuerte y 90 s suave, 6-8 veces. Sáltalo si llegas muy cansado o en semana de descarga"]],
@@ -1756,6 +1783,7 @@ const EXERCISE_ILLUSTRATIONS = {
 "Pec deck invertido (deltoide posterior)":`<svg viewBox="0 0 200 140"><line x1="100" y1="20" x2="100" y2="120" class="fig-bench"/><rect x="70" y="96" width="34" height="8" rx="3" class="fig-bench"/><circle cx="84" cy="38" r="10" class="fig-head"/><line x1="86" y1="48" x2="88" y2="94" class="fig-line"/><line x1="88" y1="94" x2="70" y2="98" class="fig-line"/><line x1="70" y1="98" x2="72" y2="128" class="fig-line"/><line x1="88" y1="58" x2="44" y2="56" class="fig-line"/><line x1="88" y1="58" x2="132" y2="56" class="fig-line"/><line x1="58" y1="70" x2="30" y2="70" class="fig-accent"/><line x1="30" y1="70" x2="38" y2="64" class="fig-accent"/><line x1="30" y1="70" x2="38" y2="76" class="fig-accent"/><line x1="118" y1="70" x2="146" y2="70" class="fig-accent"/><line x1="146" y1="70" x2="138" y2="64" class="fig-accent"/><line x1="146" y1="70" x2="138" y2="76" class="fig-accent"/></svg>`,
 "Caminata inclinada en cinta":`<svg viewBox="0 0 200 140"><line x1="28" y1="128" x2="166" y2="100" class="fig-bench"/><line x1="162" y1="101" x2="158" y2="48" class="fig-bench"/><line x1="158" y1="50" x2="138" y2="54" class="fig-bench"/><circle cx="96" cy="28" r="10" class="fig-head"/><line x1="96" y1="38" x2="100" y2="80" class="fig-line"/><line x1="100" y1="80" x2="88" y2="98" class="fig-line"/><line x1="88" y1="98" x2="82" y2="114" class="fig-line"/><line x1="100" y1="80" x2="114" y2="96" class="fig-line"/><line x1="114" y1="96" x2="120" y2="108" class="fig-line"/><line x1="98" y1="48" x2="86" y2="68" class="fig-line"/><line x1="98" y1="48" x2="112" y2="66" class="fig-line"/><line x1="40" y1="138" x2="110" y2="124" class="fig-accent"/><line x1="110" y1="124" x2="101" y2="121" class="fig-accent"/><line x1="110" y1="124" x2="104" y2="131" class="fig-accent"/></svg>`
 };
+EXERCISE_ILLUSTRATIONS["Cruce de poleas de abajo hacia arriba"] = `<svg viewBox="0 0 200 140"><circle cx="28" cy="124" r="6" class="fig-bench"/><circle cx="172" cy="124" r="6" class="fig-bench"/><line x1="32" y1="120" x2="70" y2="80" class="fig-bench" stroke-dasharray="5 4"/><line x1="168" y1="120" x2="130" y2="80" class="fig-bench" stroke-dasharray="5 4"/><circle cx="100" cy="28" r="10" class="fig-head"/><line x1="100" y1="38" x2="100" y2="90" class="fig-line"/><line x1="100" y1="90" x2="86" y2="128" class="fig-line"/><line x1="100" y1="90" x2="114" y2="128" class="fig-line"/><line x1="98" y1="50" x2="70" y2="80" class="fig-line"/><line x1="102" y1="50" x2="130" y2="80" class="fig-line"/><path d="M60 92 Q64 64 90 52" class="fig-accent"/><line x1="90" y1="52" x2="81" y2="52" class="fig-accent"/><line x1="90" y1="52" x2="85" y2="60" class="fig-accent"/><path d="M140 92 Q136 64 110 52" class="fig-accent"/><line x1="110" y1="52" x2="119" y2="52" class="fig-accent"/><line x1="110" y1="52" x2="115" y2="60" class="fig-accent"/></svg>`;
 /* Variantes que comparten dibujo con otro ejercicio */
 EXERCISE_ILLUSTRATIONS["Extensión de tríceps sobre la cabeza con cuerda"] = EXERCISE_ILLUSTRATIONS["Extensión de tríceps unilateral sobre la cabeza"];
 EXERCISE_ILLUSTRATIONS["HIIT en bicicleta (intervalos)"] = EXERCISE_ILLUSTRATIONS["Bicicleta estática"] && EXERCISE_ILLUSTRATIONS["Bicicleta estática"].replace('</svg>','<line x1="10" y1="45" x2="45" y2="45" class="fig-accent"/><line x1="5" y1="62" x2="40" y2="62" class="fig-accent"/><line x1="10" y1="79" x2="42" y2="79" class="fig-accent"/></svg>');
@@ -1875,8 +1903,8 @@ const EXERCISE_CUES = {
 "Si te molestan las rodillas, sube un poco la altura"
 ],
 "Extensión de tríceps sobre la cabeza con cuerda": [
-"De espaldas a la polea, con la cuerda detrás de la cabeza",
-"Codos apuntando al frente, cerca de la cabeza",
+"De espaldas a la polea baja, con la cuerda detrás de la cabeza",
+"Codos apuntando al techo, cerca de la cabeza",
 "Baja hasta sentir el estiramiento del tríceps",
 "Extiende sin mover los codos y abre la cuerda arriba"
 ],
@@ -1915,23 +1943,495 @@ const EXERCISE_CUES = {
 "30 s a fondo y 90 s suave, 6-8 veces",
 "En los 30 s fuertes, sube la resistencia, no solo la velocidad",
 "Una vez por semana basta; sáltalo si llegas muy cansado"
+],
+"Cruce de poleas de abajo hacia arriba": [
+"Poleas en la posición más baja; da un paso adelante",
+"Brazos un poco flexionados y palmas mirando hacia arriba",
+"Sube en arco hasta juntar las manos a la altura de la barbilla",
+"Aprieta 1 s arriba: así trabaja la parte alta del pecho"
+],
+"Peck deck (contractora)": [
+"Asiento a la altura en que los agarres queden a nivel del pecho",
+"Codos un poco flexionados y hombros atrás",
+"Cierra del todo y aprieta 2 s: así trabaja el centro del pecho",
+"Abre lento hasta sentir el estiramiento, sin pasar más atrás de los hombros"
 ]
 };
+/* ============ ANIMACIONES DE TÉCNICA (figura humana ilustrada) ============
+   Esqueleto 2D con huesos de largo fijo. Vista lateral (cinemática directa por ángulos,
+   con anclas en cadera / pie / punta / rodilla / mano) y vista frontal (por puntos).
+   Ángulos en grados, eje y hacia abajo (SVG). La figura mira a la derecha. */
+const XA_RIG = {torso:34, neck:12, head:8.5, ua:20, fa:19, th:25, sh:24, ft:8};
+const XA_D2R = Math.PI/180;
+function xaPt(o, a, l){ return [o[0]+Math.cos(a*XA_D2R)*l, o[1]+Math.sin(a*XA_D2R)*l]; }
+function xaMix(a, b, t){ return a+(b-a)*t; }
+function xaMixP(p, q, t, via){
+  if(via){ const u=1-t; return [u*u*p[0]+2*u*t*via[0]+t*t*q[0], u*u*p[1]+2*u*t*via[1]+t*t*q[1]]; }
+  return [xaMix(p[0],q[0],t), xaMix(p[1],q[1],t)];
+}
+function xaIK(root, end, l1, l2, bend){
+  const dx=end[0]-root[0], dy=end[1]-root[1];
+  const d=Math.min(Math.hypot(dx,dy), l1+l2-0.01);
+  const base=Math.atan2(dy,dx), c=(l1*l1+d*d-l2*l2)/(2*l1*d);
+  const a=base + bend*Math.acos(Math.max(-1,Math.min(1,c)));
+  return [root[0]+Math.cos(a)*l1, root[1]+Math.sin(a)*l1];
+}
+function xaPose(A, B, t){
+  const o = {};
+  for(const k of new Set([...Object.keys(A), ...Object.keys(B)])){
+    const a = A[k], b = (B[k]!==undefined) ? B[k] : a;
+    if(a===undefined) o[k] = b;
+    else if(typeof a==='number') o[k] = xaMix(a, b, t);
+    else if(Array.isArray(a)) o[k] = [xaMix(a[0],b[0],t), xaMix(a[1],b[1],t)];
+    else o[k] = t<0.5 ? a : b;
+  }
+  return o;
+}
+/* Vista lateral */
+function xaSide(p){
+  const R = XA_RIG, ft = p.ft ?? 0;
+  let hip, sho, knee, ankle, toe, elbow, hand;
+  if(p.anchor==='toe'){ toe=p.toe; ankle=xaPt(toe, ft+180, R.ft); knee=xaPt(ankle, p.sh+180, R.sh); hip=xaPt(knee, p.th+180, R.th); }
+  else if(p.anchor==='foot'){ ankle=p.ankle; knee=xaPt(ankle, p.sh+180, R.sh); hip=xaPt(knee, p.th+180, R.th); }
+  else if(p.anchor==='knee'){ knee=p.knee; hip=xaPt(knee, p.th+180, R.th); }
+  else if(p.anchor==='hand'){ hand=p.hand; elbow=xaPt(hand, p.fa+180, R.fa); sho=xaPt(elbow, p.ua+180, R.ua); hip=xaPt(sho, p.torso+180, R.torso); }
+  else hip = p.hip;
+  sho = sho || xaPt(hip, p.torso, R.torso);
+  const head = xaPt(sho, p.neck ?? p.torso, R.neck);
+  knee = knee || xaPt(hip, p.th, R.th);
+  ankle = ankle || xaPt(knee, p.sh, R.sh);
+  toe = toe || xaPt(ankle, ft, R.ft);
+  elbow = elbow || xaPt(sho, p.ua, R.ua);
+  hand = hand || xaPt(elbow, p.fa, R.fa);
+  let knee2, ankle2;
+  if(p.ankle2){ ankle2 = p.ankle2; knee2 = xaIK(hip, ankle2, R.th, R.sh, p.bend2 ?? -1); }
+  else { knee2 = xaPt(hip, p.th2 ?? p.th, R.th); ankle2 = xaPt(knee2, p.sh2 ?? p.sh, R.sh); }
+  const toe2 = xaPt(ankle2, p.ft2 ?? ft, R.ft);
+  const elbow2 = xaPt(sho, p.ua2 ?? p.ua, R.ua), hand2 = xaPt(elbow2, p.fa2 ?? p.fa, R.fa);
+  return {hip, sho, head, knee, ankle, toe, elbow, hand, knee2, ankle2, toe2, elbow2, hand2};
+}
+/* Vista frontal: puntos del lado derecho; el izquierdo se refleja si no se indica */
+function xaFront(p){
+  const c = p.cx ?? 100, sy = p.shoY ?? 43, hy = p.hipY ?? 77;
+  const mir = q => [2*c-q[0], q[1]];
+  const kR = p.kR || [c+9, hy+25], aR = p.aR || [c+10, hy+49];
+  return {front:true, c, sy, hy, head:[c, sy-12], shR:[c+12, sy], shL:[c-12, sy], hipR:[c+7, hy], hipL:[c-7, hy],
+    eR:p.eR, hR:p.hR, eL:p.eL || mir(p.eR), hL:p.hL || mir(p.hR), kR, aR, kL:p.kL || mir(kR), aL:p.aL || mir(aR)};
+}
+const XA_FRONT_KEYS = ['eR','hR','eL','hL','kR','aR','kL','aL'];
+/* Esqueleto en el instante t entre dos poses */
+function xaSkeleton(def, A, B, t){
+  if(def.view==='front'){
+    const SA = xaFront(A), SB = xaFront(B), S = xaFront(xaPose(A, B, t));
+    const via = def.via || {}, c = S.c, mir = q => q && [2*c-q[0], q[1]];
+    const v = {eR:via.eR, hR:via.hR, eL:via.eL || (!A.eL && mir(via.eR)), hL:via.hL || (!A.hL && mir(via.hR))};
+    for(const k of XA_FRONT_KEYS) S[k] = xaMixP(SA[k], SB[k], t, v[k]);
+    return S;
+  }
+  let pose = xaPose(A, B, t);
+  if(def.cycle){
+    const far = xaPose(A, B, 1-t);
+    Object.assign(pose, {th2:far.th, sh2:far.sh, ft2:far.ft, ua2:far.ua, fa2:far.fa});
+  }
+  const S = xaSide(pose);
+  if(def.lerpJ){
+    const SA = xaSide(A), SB = xaSide(B);
+    for(const j of def.lerpJ) S[j] = xaMixP(SA[j], SB[j], t, def.via && def.via[j]);
+  }
+  return S;
+}
+/* ---------- dibujo ---------- */
+const xaF = n => (Math.round(n*10)/10);
+function xaLine(a, b, w, cls){ return `<line x1="${xaF(a[0])}" y1="${xaF(a[1])}" x2="${xaF(b[0])}" y2="${xaF(b[1])}" stroke-width="${w}" class="${cls}"/>`; }
+function xaPoly(pts, cls){ return `<polygon points="${pts.map(q=>xaF(q[0])+','+xaF(q[1])).join(' ')}" class="${cls}"/>`; }
+function xaCirc(c, r, cls){ return `<circle cx="${xaF(c[0])}" cy="${xaF(c[1])}" r="${r}" class="${cls}"/>`; }
+function xaSideTorso(S, prone){
+  const hip = S.hip, sho = S.sho, dx = sho[0]-hip[0], dy = sho[1]-hip[1], L = Math.hypot(dx,dy) || 1;
+  const sg = prone ? -1 : 1, n = [-dy/L*sg, dx/L*sg], d = [dx/L, dy/L];
+  const at = (t, off) => [hip[0]+d[0]*L*t+n[0]*off, hip[1]+d[1]*L*t+n[1]*off];
+  return xaPoly([at(0,5.5), at(0.45,6), at(0.78,8.5), at(1,6.5), at(1.04,0), at(1,-6.5), at(0.62,-7.5), at(0.1,-6.5), at(-0.06,0)], 'xa-skin');
+}
+function xaBody(S){
+  if(S.front){
+    let s = '';
+    s += xaLine(S.hipR, S.kR, 10, 'xa-limb') + xaLine(S.kR, S.aR, 8, 'xa-limb') + xaLine(S.aR, [S.aR[0]+3, S.aR[1]+2], 6, 'xa-limb');
+    s += xaLine(S.hipL, S.kL, 10, 'xa-limb') + xaLine(S.kL, S.aL, 8, 'xa-limb') + xaLine(S.aL, [S.aL[0]-3, S.aL[1]+2], 6, 'xa-limb');
+    s += xaPoly([[S.c-8, S.hy+3],[S.c+8, S.hy+3],[S.c+14, S.sy+2],[S.c+12, S.sy-3],[S.c-12, S.sy-3],[S.c-14, S.sy+2]], 'xa-skin');
+    s += xaLine([S.c, S.sy-2], S.head, 6, 'xa-limb') + xaCirc(S.head, XA_RIG.head, 'xa-skin');
+    return s;
+  }
+  return '';
+}
+function xaArmsFront(S){
+  return xaLine(S.shR, S.eR, 7, 'xa-limb') + xaLine(S.eR, S.hR, 6, 'xa-limb') + xaCirc(S.hR, 3.4, 'xa-skin') +
+         xaLine(S.shL, S.eL, 7, 'xa-limb') + xaLine(S.eL, S.hL, 6, 'xa-limb') + xaCirc(S.hL, 3.4, 'xa-skin');
+}
+function xaEquip(S, e){
+  const J = k => Array.isArray(k) ? k : S[k];
+  switch(e[0]){
+    case 'db': { const c = J(e[1]); return xaCirc(c, 5.2, 'xa-eq') + xaCirc(c, 1.8, 'xa-hub'); }
+    case 'plate': { const c = J(e[1]); return xaCirc(c, e[2] || 9, 'xa-eq') + xaCirc(c, 2.2, 'xa-hub'); }
+    case 'bar': { const c = J(e[1]); return xaCirc(c, 3.2, 'xa-eq'); }
+    case 'hbar': { const c = J(e[1]), w = e[2] || 16; return xaLine([c[0]-w, c[1]], [c[0]+w, c[1]], 3.5, 'xa-eqline'); }
+    case 'cable': { const a = J(e[1]), b = J(e[2]); return xaLine(a, b, 1.6, 'xa-cable') + xaCirc(a, 4, 'xa-eq'); }
+    case 'rope': { const c = J(e[1]); return xaLine(c, [c[0]-3, c[1]+6], 2.4, 'xa-eqline') + xaLine(c, [c[0]+3, c[1]+6], 2.4, 'xa-eqline'); }
+    case 'roller': { const c = J(e[1]); return xaCirc([c[0]+(e[2]||0), c[1]+(e[3]||0)], 4.6, 'xa-eq'); }
+    case 'wheel': { const c = J(e[1]); return xaCirc([c[0], c[1]+3], 6.5, 'xa-eq') + xaCirc([c[0], c[1]+3], 1.8, 'xa-hub'); }
+    case 'plateLine': { const c = J(e[1]), a = e[2]*XA_D2R, l = e[3] || 14, ox = e[4]||0, oy = e[5]||0;
+      const m = [c[0]+ox, c[1]+oy]; return xaLine([m[0]-Math.cos(a)*l, m[1]-Math.sin(a)*l], [m[0]+Math.cos(a)*l, m[1]+Math.sin(a)*l], 4, 'xa-eqline'); }
+    case 'pad': { const c = J(e[1]); return `<rect x="${xaF(c[0]+(e[2]||0)-e[4]/2)}" y="${xaF(c[1]+(e[3]||0)-e[5]/2)}" width="${e[4]}" height="${e[5]}" rx="3" class="xa-eq"/>`; }
+    case 'lever': { const a = J(e[1]), b = J(e[2]); return xaLine(a, b, 3, 'xa-eqline') + xaCirc(a, 3, 'xa-hub'); }
+    case 'crank': { const a = J(e[1]), b = J(e[2]); return xaLine(a, b, 3, 'xa-eqline') + xaCirc(a, 2.5, 'xa-hub'); }
+    case 'rollerN': { const a = J(e[1]), b = J(e[2]), dx = b[0]-a[0], dy = b[1]-a[1], L = Math.hypot(dx,dy)||1;
+      const c = [a[0]+dx*e[3] + dy/L*e[4]*e[5], a[1]+dy*e[3] - dx/L*e[4]*e[5]]; return xaCirc(c, 4.6, 'xa-eq'); }
+  }
+  return '';
+}
+function xaHighlights(S, def, prog){
+  const op = def.hold ? 0.62 : (0.16 + 0.6*prog);
+  return (def.hl||[]).map(h=>{
+    let c, rot = 0;
+    if(h.pt) c = h.pt;
+    else {
+      const map = {torso:['hip','sho'], ua:['sho','elbow'], fa:['elbow','hand'], th:['hip','knee'], sh:['knee','ankle'],
+                   ua2:['sho','elbow2'], fa2:['elbow2','hand2'], th2:['hip','knee2'], sh2:['knee2','ankle2']};
+      const [a, b] = map[h.bone].map(k=>S[k]);
+      const dx = b[0]-a[0], dy = b[1]-a[1], L = Math.hypot(dx,dy) || 1;
+      const sg = (h.bone==='torso' && def.prone) ? -1 : 1;
+      const n = h.bone==='torso' ? [-dy/L*sg, dx/L*sg] : [dy/L, -dx/L], side = h.side ?? 1, off = h.off ?? 3;
+      c = [a[0]+dx*h.t + n[0]*off*side, a[1]+dy*h.t + n[1]*off*side];
+      rot = Math.atan2(dy, dx)/XA_D2R;
+    }
+    return `<ellipse cx="${xaF(c[0])}" cy="${xaF(c[1])}" rx="${h.rx||6}" ry="${h.ry||3.5}" transform="rotate(${xaF(rot)} ${xaF(c[0])} ${xaF(c[1])})" class="xa-hl" style="opacity:${op.toFixed(2)}"/>`;
+  }).join('');
+}
+function xaDraw(def, S, prog){
+  let s = '';
+  const eq = def.eq || [];
+  const back = eq.filter(e=>e[0]==='cable' || e[0]==='lever' || e[0]==='crank' || e.includes('back'));
+  const front = eq.filter(e=>!back.includes(e));
+  if(S.front){
+    s += back.map(e=>xaEquip(S,e)).join('');
+    s += xaBody(S) + xaHighlights(S, def, prog) + xaArmsFront(S);
+    s += front.map(e=>xaEquip(S,e)).join('');
+    return s;
+  }
+  // brazo y pierna del fondo (más tenues)
+  s += `<g class="xa-far">` + xaLine(S.hip, S.knee2, 10, 'xa-limb') + xaLine(S.knee2, S.ankle2, 8, 'xa-limb') + xaLine(S.ankle2, S.toe2, 5, 'xa-limb') +
+       xaLine(S.sho, S.elbow2, 7, 'xa-limb') + xaLine(S.elbow2, S.hand2, 6, 'xa-limb') + xaCirc(S.hand2, 3.3, 'xa-skin') + `</g>`;
+  s += back.map(e=>xaEquip(S,e)).join('');
+  s += xaLine(S.hip, S.knee, 10.5, 'xa-limb') + xaLine(S.knee, S.ankle, 8.5, 'xa-limb') + xaLine(S.ankle, S.toe, 5.5, 'xa-limb');
+  s += xaSideTorso(S, def.prone) + xaLine(S.sho, S.head, 5.5, 'xa-limb') + xaCirc(S.head, XA_RIG.head, 'xa-skin');
+  s += xaHighlights(S, def, prog);
+  s += xaLine(S.sho, S.elbow, 7.5, 'xa-limb') + xaLine(S.elbow, S.hand, 6.5, 'xa-limb') + xaCirc(S.hand, 3.5, 'xa-skin');
+  s += front.map(e=>xaEquip(S,e)).join('');
+  return s;
+}
+/* ---------- línea de tiempo ---------- */
+const xaEase = t => 0.5 - 0.5*Math.cos(Math.PI*t);
+function xaTimeline(def){
+  if(def.timeline) return def.timeline;
+  const n = def.frames.length;
+  if(def.cycle) return [['cyc', def.cycle]];
+  const [up, top, down, bot] = def.tempo || [1.0, 0.5, 1.8, 0.4];
+  if(n===3) return [['m',0,1,up],['h',1,top],['m',1,0,down],['h',0,bot],['m',0,2,up],['h',2,top],['m',2,0,down],['h',0,bot]];
+  if(def.hold) return [['m',0,1,2.2],['m',1,0,2.2]];
+  return [['m',0,1,up],['h',1,top],['m',1,0,down],['h',0,bot]];
+}
+function xaState(def, time){
+  const tl = xaTimeline(def), F = def.frames;
+  if(tl[0][0]==='cyc'){ const p = tl[0][1], u = (time % p)/p; const t = 0.5 - 0.5*Math.cos(2*Math.PI*u); return {A:F[0], B:F[1], t, prog:t}; }
+  const total = tl.reduce((s,x)=>s + (x[0]==='m' ? x[3] : x[2]), 0);
+  let r = time % total;
+  for(const st of tl){
+    const d = st[0]==='m' ? st[3] : st[2];
+    if(r <= d || st===tl[tl.length-1]){
+      if(st[0]==='h'){ const f = F[st[1]]; return {A:f, B:f, t:0, prog: st[1]===0 ? 0 : 1}; }
+      const t = xaEase(Math.min(1, r/d)); return {A:F[st[1]], B:F[st[2]], t, prog: st[2]===0 ? 1-t : t};
+    }
+    r -= d;
+  }
+}
+function xaFrameSVG(def, time){
+  const st = xaState(def, time), S = xaSkeleton(def, st.A, st.B, st.t);
+  return xaDraw(def, S, st.prog);
+}
+function xaTempoLabel(def){
+  if(def.label) return def.label;
+  if(def.hold) return 'Mantén la posición, respirando normal';
+  if(def.cycle) return 'Ritmo constante';
+  const [up,,down] = def.tempo || [1.0, 0.5, 1.8, 0.4];
+  const r = v => (Math.round(v*2)/2).toString().replace('.', ',');
+  return `Esfuerzo ${r(up)}\u00a0s · regreso ${r(down)}\u00a0s, controlado`;
+}
+
+/* ---------- escenografía reutilizable ---------- */
+const XA_GROUND = y => `<line x1="6" y1="${y}" x2="194" y2="${y}" class="xa-ground"/>`;
+const XA_BG = {
+  flatBench: `<rect x="44" y="92" width="102" height="7" rx="3" class="xa-bench"/><line x1="58" y1="99" x2="58" y2="128" class="xa-benchleg"/><line x1="132" y1="99" x2="132" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  inclineBench: `<line x1="120" y1="104" x2="74" y2="78" stroke-width="7" class="xa-pad"/><line x1="112" y1="104" x2="142" y2="104" stroke-width="6" class="xa-pad"/><line x1="126" y1="106" x2="126" y2="128" class="xa-benchleg"/><line x1="92" y1="94" x2="92" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  smithIncline: `<line x1="78" y1="4" x2="78" y2="128" class="xa-rail"/><line x1="112" y1="4" x2="112" y2="128" class="xa-rail"/>`,
+  smithSquat: `<line x1="84" y1="4" x2="84" y2="128" class="xa-rail"/><line x1="120" y1="4" x2="120" y2="128" class="xa-rail"/>`,
+  towers: `<line x1="176" y1="6" x2="176" y2="128" class="xa-rail"/><line x1="24" y1="6" x2="24" y2="128" class="xa-rail"/>` + XA_GROUND(128),
+  towerR: `<line x1="176" y1="4" x2="176" y2="128" class="xa-rail"/>` + XA_GROUND(128),
+  towerL: `<line x1="34" y1="4" x2="34" y2="128" class="xa-rail"/>` + XA_GROUND(128),
+  pecdeck: `<line x1="38" y1="8" x2="38" y2="128" class="xa-rail"/><line x1="162" y1="8" x2="162" y2="128" class="xa-rail"/><line x1="38" y1="8" x2="162" y2="8" class="xa-rail"/><rect x="86" y="84" width="28" height="7" rx="3" class="xa-bench"/><line x1="100" y1="91" x2="100" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  pulldown: `<line x1="104" y1="2" x2="150" y2="2" class="xa-rail"/><line x1="150" y1="2" x2="150" y2="128" class="xa-rail"/><rect x="78" y="100" width="36" height="6" rx="3" class="xa-bench"/><line x1="96" y1="106" x2="96" y2="128" class="xa-benchleg"/><rect x="112" y="86" width="20" height="6" rx="3" class="xa-pad2"/>` + XA_GROUND(128),
+  rowBench: `<rect x="46" y="100" width="76" height="6" rx="3" class="xa-bench"/><line x1="56" y1="106" x2="56" y2="127" class="xa-benchleg"/><line x1="112" y1="106" x2="112" y2="127" class="xa-benchleg"/>` + XA_GROUND(127),
+  cableRow: `<rect x="56" y="112" width="44" height="6" rx="3" class="xa-bench"/><line x1="131" y1="90" x2="131" y2="118" stroke-width="4" class="xa-pad"/><line x1="168" y1="20" x2="168" y2="128" class="xa-rail"/>` + XA_GROUND(128),
+  machineRow: `<rect x="66" y="96" width="34" height="6" rx="3" class="xa-bench"/><line x1="84" y1="102" x2="84" y2="128" class="xa-benchleg"/><rect x="108" y="52" width="7" height="30" rx="3" class="xa-pad2"/><line x1="150" y1="20" x2="150" y2="128" class="xa-rail"/>` + XA_GROUND(128),
+  inclineCurl: `<line x1="106" y1="104" x2="72" y2="66" stroke-width="7" class="xa-pad"/><line x1="100" y1="104" x2="134" y2="104" stroke-width="6" class="xa-pad"/><line x1="116" y1="106" x2="116" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  calf: `<rect x="98" y="112" width="26" height="16" rx="2" class="xa-bench"/><line x1="78" y1="8" x2="78" y2="128" class="xa-rail"/>` + XA_GROUND(128),
+  legPress: `<line x1="84" y1="104" x2="36" y2="78" stroke-width="7" class="xa-pad"/><line x1="78" y1="106" x2="104" y2="112" stroke-width="6" class="xa-pad"/><line x1="98" y1="110" x2="162" y2="46" class="xa-rail" stroke-dasharray="4 4"/><line x1="30" y1="124" x2="172" y2="124" class="xa-benchleg"/>` + XA_GROUND(128),
+  legCurl: `<rect x="40" y="97" width="110" height="7" rx="3" class="xa-bench"/><line x1="52" y1="104" x2="52" y2="128" class="xa-benchleg"/><line x1="140" y1="104" x2="140" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  legExt: `<rect x="76" y="98" width="46" height="7" rx="3" class="xa-bench"/><line x1="84" y1="100" x2="88" y2="50" stroke-width="7" class="xa-pad"/><line x1="96" y1="105" x2="96" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  bulgarian: `<rect x="40" y="102" width="38" height="6" rx="3" class="xa-bench"/><line x1="48" y1="108" x2="48" y2="128" class="xa-benchleg"/><line x1="70" y1="108" x2="70" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  hang: `<line x1="70" y1="4" x2="140" y2="4" class="xa-rail"/>` + `<circle cx="104" cy="8" r="3.5" class="xa-eq"/>`,
+  treadmill: `<line x1="28" y1="128" x2="172" y2="108" stroke-width="5" class="xa-pad"/><line x1="162" y1="110" x2="158" y2="58" class="xa-benchleg"/><line x1="158" y1="60" x2="140" y2="63" class="xa-benchleg"/>`,
+  elliptical: `<line x1="40" y1="122" x2="152" y2="122" stroke-width="5" class="xa-pad"/><line x1="134" y1="120" x2="130" y2="96" class="xa-benchleg"/>`,
+  bike: `<line x1="70" y1="124" x2="152" y2="124" stroke-width="5" class="xa-pad"/><line x1="90" y1="78" x2="100" y2="122" class="xa-benchleg"/><line x1="80" y1="76" x2="98" y2="76" stroke-width="5" class="xa-pad"/><line x1="126" y1="122" x2="142" y2="52" class="xa-benchleg"/><line x1="138" y1="50" x2="150" y2="48" stroke-width="4" class="xa-pad"/><circle cx="134" cy="106" r="14" class="xa-bench"/>`,
+  seatPress: `<rect x="80" y="100" width="34" height="6" rx="3" class="xa-bench"/><line x1="82" y1="100" x2="84" y2="58" stroke-width="7" class="xa-pad"/><line x1="98" y1="106" x2="98" y2="128" class="xa-benchleg"/>` + XA_GROUND(128),
+  post: `<line x1="70" y1="12" x2="70" y2="128" stroke-width="4" class="xa-pad"/>` + XA_GROUND(128),
+  speed: `<line x1="10" y1="40" x2="40" y2="40" class="xa-speed"/><line x1="6" y1="56" x2="36" y2="56" class="xa-speed"/><line x1="12" y1="72" x2="38" y2="72" class="xa-speed"/>`
+};
+/* ---------- poses base ---------- */
+const XA_STAND = (x, extra) => Object.assign({anchor:'foot', ankle:[x,126], th:91, sh:89, torso:-90, neck:-90, ft:0, ua:92, fa:90}, extra||{});
+/* ---------- ejercicios ---------- */
+const XA_DEFS = {
+  'Press de banca': {
+    frames:[{hip:[120,86], torso:180, neck:182, th:30, sh:90, ft:0, ua:25, fa:-95},
+            {hip:[120,86], torso:180, neck:182, th:30, sh:90, ft:0, ua:-80, fa:-88}],
+    eq:[['plate','hand',9.5]], hl:[{bone:'torso', t:0.8, side:1, off:5, rx:7, ry:3.5}], bg:XA_BG.flatBench},
+  'Press con mancuernas plano': {
+    frames:[{hip:[120,86], torso:180, neck:182, th:30, sh:90, ft:0, ua:25, fa:-95},
+            {hip:[120,86], torso:180, neck:182, th:30, sh:90, ft:0, ua:-84, fa:-92}],
+    eq:[['db','hand']], hl:[{bone:'torso', t:0.8, side:1, off:5, rx:7, ry:3.5}], bg:XA_BG.flatBench},
+  'Press inclinado con mancuernas': {
+    frames:[{hip:[118,95], torso:-150, neck:-145, th:8, sh:92, ft:0, ua:68, fa:-92},
+            {hip:[118,95], torso:-150, neck:-145, th:8, sh:92, ft:0, ua:-95, fa:-93}],
+    eq:[['db','hand']], hl:[{bone:'torso', t:0.86, side:1, off:5, rx:6.5, ry:3.5}], bg:XA_BG.inclineBench},
+  'Press inclinado en Smith': {
+    frames:[{hip:[118,95], torso:-150, neck:-145, th:8, sh:92, ft:0, ua:68, fa:-92},
+            {hip:[118,95], torso:-150, neck:-145, th:8, sh:92, ft:0, ua:-80, fa:-84}],
+    eq:[['plate','hand',9.5]], hl:[{bone:'torso', t:0.86, side:1, off:5, rx:6.5, ry:3.5}], bg:XA_BG.smithIncline + XA_BG.inclineBench},
+  'Cruce de poleas de abajo hacia arriba': {
+    view:'front', frames:[{eR:[124,58], hR:[134,75]}, {eR:[109,45], hR:[101,38]}],
+    via:{hR:[136,48], eR:[123,48]}, eq:[['cable',[176,124],'hR'],['cable',[24,124],'hL'],['bar','hR'],['bar','hL']],
+    hl:[{pt:[106,49], rx:6, ry:4},{pt:[94,49], rx:6, ry:4}], bg:XA_BG.towers},
+  'Elevación lateral unilateral': {
+    view:'front', frames:[{eR:[114,63], hR:[115,82], eL:[84,57], hL:[73,52]}, {eR:[131,42], hR:[148,46], eL:[84,57], hL:[73,52]}],
+    via:{hR:[148,76], eR:[130,58]}, eq:[['db','hR']], hl:[{pt:[115,44], rx:5, ry:5}], bg:XA_BG.post},
+  'Elevaciones laterales': {
+    view:'front', frames:[{eR:[114,63], hR:[115,82]}, {eR:[131,42], hR:[148,46]}],
+    via:{hR:[148,76], eR:[130,58]}, eq:[['db','hR'],['db','hL']], hl:[{pt:[115,44], rx:5, ry:5},{pt:[85,44], rx:5, ry:5}], bg:XA_GROUND(128)},
+  'Elevación lateral por detrás del cuerpo (polea)': {
+    view:'front', frames:[{eR:[113,62], hR:[106,79], eL:[86,62], hL:[84,80]}, {eR:[131,42], hR:[148,47], eL:[86,62], hL:[84,80]}],
+    via:{hR:[142,78], eR:[128,60]}, eq:[['cable',[30,124],'hR'],['bar','hR']], hl:[{pt:[115,44], rx:5, ry:5}], bg:XA_BG.towerL},
+  'Peck deck (contractora)': {
+    view:'front', frames:[{shoY:50, hipY:84, kR:[112,96], aR:[113,122], eR:[132,52], hR:[146,46]},
+                          {shoY:50, hipY:84, kR:[112,96], aR:[113,122], eR:[111,53], hR:[103,48]}],
+    eq:[['bar','hR'],['bar','hL']], hl:[{pt:[100,58], rx:12, ry:5}], bg:XA_BG.pecdeck, tempo:[1.0,1.5,1.6,0.3]},
+  'Pec deck invertido (deltoide posterior)': {
+    view:'front', frames:[{shoY:50, hipY:84, kR:[112,96], aR:[113,122], eR:[111,53], hR:[103,48]},
+                          {shoY:50, hipY:84, kR:[112,96], aR:[113,122], eR:[132,52], hR:[146,47]}],
+    eq:[['bar','hR'],['bar','hL']], hl:[{pt:[113,50], rx:5, ry:5},{pt:[87,50], rx:5, ry:5}], bg:XA_BG.pecdeck},
+  'Face pull': {
+    frames:[XA_STAND(88, {torso:-92, ua:-15, fa:-12}), XA_STAND(88, {torso:-92, ua:-150, fa:-20})],
+    lerpJ:['elbow','hand','elbow2','hand2'], eq:[['cable',[176,30],'hand'],['rope','hand']],
+    hl:[{bone:'torso', t:0.95, side:-1, off:6, rx:5, ry:4}], bg:XA_BG.towerR},
+  'Extensión de tríceps sobre la cabeza con cuerda': {
+    frames:[XA_STAND(104, {torso:-86, neck:-86, th:92, sh:88, th2:106, sh2:100, ua:-100, fa:110}),
+            XA_STAND(104, {torso:-86, neck:-86, th:92, sh:88, th2:106, sh2:100, ua:-100, fa:262})],
+    eq:[['cable',[36,124],'hand'],['rope','hand']], hl:[{bone:'ua', t:0.5, side:1, off:3.5, rx:6, ry:3}], bg:XA_BG.towerL},
+  'Extensión de tríceps unilateral sobre la cabeza': {
+    frames:[XA_STAND(104, {torso:-86, neck:-86, th:92, sh:88, th2:106, sh2:100, ua:-100, fa:110, ua2:120, fa2:40}),
+            XA_STAND(104, {torso:-86, neck:-86, th:92, sh:88, th2:106, sh2:100, ua:-100, fa:262, ua2:120, fa2:40})],
+    eq:[['cable',[36,124],'hand']], hl:[{bone:'ua', t:0.5, side:1, off:3.5, rx:6, ry:3}], bg:XA_BG.towerL},
+  'Jalón de tríceps con cuerda': {
+    frames:[XA_STAND(92, {th:85, sh:95, torso:-80, neck:-75, ua:95, fa:-40}), XA_STAND(92, {th:85, sh:95, torso:-80, neck:-75, ua:95, fa:80})],
+    eq:[['cable',[150,10],'hand'],['rope','hand']], hl:[{bone:'ua', t:0.5, side:-1, off:3.5, rx:6, ry:3}], bg:XA_BG.towerR, tempo:[0.9,0.4,1.6,0.3]},
+  'Jalón de tríceps con barra': {
+    frames:[XA_STAND(92, {th:85, sh:95, torso:-80, neck:-75, ua:95, fa:-40}), XA_STAND(92, {th:85, sh:95, torso:-80, neck:-75, ua:95, fa:80})],
+    eq:[['cable',[150,10],'hand'],['bar','hand']], hl:[{bone:'ua', t:0.5, side:-1, off:3.5, rx:6, ry:3}], bg:XA_BG.towerR, tempo:[0.9,0.4,1.6,0.3]},
+  'Abdominales crunch': {
+    frames:[{hip:[106,119], torso:180, neck:180, th:-52, sh:68, ft:-5, ua:5, fa:3},
+            {hip:[106,119], torso:208, neck:225, th:-52, sh:68, ft:-5, ua:-25, fa:-18}],
+    hl:[{bone:'torso', t:0.4, side:1, off:5, rx:8, ry:3.5}], bg:XA_GROUND(128), tempo:[0.9,0.6,1.4,0.3]},
+  'Plancha (plank)': {
+    hold:true, label:'Mantén 30-45 s: cuerpo recto de cabeza a talones',
+    frames:[{hip:[100.8,107.3], torso:-12.4, neck:-5, th:167.6, sh:167.6, ft:100, ua:90, fa:0},
+            {hip:[100.8,106.3], torso:-12.9, neck:-5, th:167.9, sh:167.6, ft:100, ua:90, fa:0}],
+    hl:[{bone:'torso', t:0.45, side:1, off:5, rx:9, ry:3.5}], bg:XA_GROUND(126)},
+  'Plancha lateral': {
+    hold:true, label:'Mantén 30 s por lado: cadera arriba, cuerpo en línea',
+    frames:[{hip:[99,107], torso:193.7, neck:190, th:13.7, sh:13.7, ft:30, ua:90, fa:0, ua2:50, fa2:-10},
+            {hip:[99,105], torso:192.5, neck:190, th:14.5, sh:13.7, ft:30, ua:90, fa:0, ua2:50, fa2:-10}],
+    hl:[{bone:'torso', t:0.4, side:1, off:5, rx:8, ry:3.5}], bg:XA_GROUND(123)},
+  'Caminata inclinada en cinta': {
+    cycle:1.15, label:'Paso constante, sin agarrarte de la barra',
+    frames:[{hip:[100,70], torso:-84, neck:-82, th:70, sh:95, ft:-8, ua:105, fa:100},
+            {hip:[100,70], torso:-84, neck:-82, th:108, sh:118, ft:20, ua:75, fa:50}],
+    bg:XA_BG.treadmill},
+  'Elíptica': {
+    cycle:1.3, label:'Ritmo suave y constante',
+    frames:[{hip:[96,64], torso:-86, neck:-84, th:72, sh:100, ft:0, ua:30, fa:-40},
+            {hip:[96,64], torso:-86, neck:-84, th:100, sh:108, ft:0, ua:75, fa:10}],
+    eq:[['lever',[130,100],'hand'],['plateLine','ankle',0,7,3,4]], bg:XA_BG.elliptical},
+  'Bicicleta estática': {
+    cycle:1.0, label:'Ritmo constante, espalda recta',
+    frames:[{hip:[88,72], torso:-58, neck:-40, th:8.4, sh:111, ft:10, ua:25, fa:-15},
+            {hip:[88,72], torso:-58, neck:-40, th:53, sh:90, ft:10, ua:25, fa:-15}],
+    eq:[['crank',[103,107],'ankle'],['crank',[103,107],'ankle2']], bg:XA_BG.bike},
+  'Jalón abierto al pecho': {
+    frames:[{hip:[98,96], torso:-95, neck:-95, th:4, sh:95, ft:0, ua:-78, fa:-82},
+            {hip:[98,96], torso:-100, neck:-92, th:4, sh:95, ft:0, ua:100, fa:-55}],
+    lerpJ:['elbow','hand','elbow2','hand2'], eq:[['cable',[104,2],'hand'],['bar','hand']],
+    hl:[{bone:'torso', t:0.62, side:-1, off:6, rx:8, ry:4}], bg:XA_BG.pulldown},
+  'Jalón cerrado al pecho': {
+    frames:[{hip:[98,96], torso:-95, neck:-95, th:4, sh:95, ft:0, ua:-78, fa:-82},
+            {hip:[98,96], torso:-102, neck:-92, th:4, sh:95, ft:0, ua:100, fa:-55}],
+    lerpJ:['elbow','hand','elbow2','hand2'], via:{elbow:[114,62], hand:[114,42], elbow2:[114,62], hand2:[114,42]},
+    eq:[['cable',[104,2],'hand'],['bar','hand']], hl:[{bone:'torso', t:0.62, side:-1, off:6, rx:8, ry:4}], bg:XA_BG.pulldown},
+  'Remo con mancuerna': {
+    frames:[{hip:[80,75], torso:-24, neck:-15, th:73.6, sh:87.9, th2:90, sh2:180, ft:0, ft2:170, ua:90, fa:90, ua2:90, fa2:90},
+            {hip:[80,75], torso:-24, neck:-15, th:73.6, sh:87.9, th2:90, sh2:180, ft:0, ft2:170, ua:210, fa:95, ua2:90, fa2:90}],
+    eq:[['db','hand']], hl:[{bone:'torso', t:0.6, side:-1, off:6, rx:9, ry:4}], bg:XA_BG.rowBench},
+  'Remo sentado en polea baja': {
+    frames:[{hip:[78,106], torso:-75, neck:-70, th:-8, sh:18, ft:-80, ua:15, fa:15},
+            {hip:[78,106], torso:-95, neck:-90, th:-8, sh:18, ft:-80, ua:160, fa:8}],
+    eq:[['cable',[168,108],'hand'],['bar','hand']], hl:[{bone:'torso', t:0.6, side:-1, off:6, rx:8, ry:4}], bg:XA_BG.cableRow},
+  'Remo en máquina': {
+    frames:[{hip:[84,92], torso:-88, neck:-88, th:10, sh:95, ft:0, ua:5, fa:5},
+            {hip:[84,92], torso:-92, neck:-90, th:10, sh:95, ft:0, ua:165, fa:5}],
+    eq:[['lever',[150,124],'hand'],['bar','hand']], hl:[{bone:'torso', t:0.6, side:-1, off:6, rx:8, ry:4}], bg:XA_BG.machineRow},
+  'Pullover en polea': {
+    frames:[XA_STAND(86, {th:80, sh:96, torso:-68, neck:-55, ua:-62, fa:-58}), XA_STAND(86, {th:80, sh:96, torso:-68, neck:-55, ua:72, fa:74})],
+    eq:[['cable',[176,8],'hand'],['bar','hand']], hl:[{bone:'torso', t:0.62, side:-1, off:6, rx:8, ry:4}], bg:XA_BG.towerR},
+  'Curl con barra Z': {
+    frames:[XA_STAND(96, {ua:93, fa:90}), XA_STAND(96, {ua:86, fa:-62})],
+    eq:[['plate','hand',6.5]], hl:[{bone:'ua', t:0.5, side:1, off:3.5, rx:6, ry:3}], bg:XA_GROUND(128), tempo:[1.0,0.5,2.0,0.3]},
+  'Curl martillo': {
+    frames:[XA_STAND(96, {ua:93, fa:90}), XA_STAND(96, {ua:86, fa:-62})],
+    eq:[['db','hand'],['db','hand2',null,'back']], hl:[{bone:'ua', t:0.5, side:1, off:3.5, rx:6, ry:3}], bg:XA_GROUND(128), tempo:[1.0,0.5,2.0,0.3]},
+  'Curl alterno con mancuernas': {
+    frames:[XA_STAND(96, {ua:93, fa:90, ua2:93, fa2:90}), XA_STAND(96, {ua:86, fa:-62, ua2:93, fa2:90}), XA_STAND(96, {ua:93, fa:90, ua2:86, fa2:-62})],
+    eq:[['db','hand'],['db','hand2',null,'back']], hl:[{bone:'ua', t:0.5, side:1, off:3.5, rx:6, ry:3}], bg:XA_GROUND(128), tempo:[1.0,0.4,1.8,0.2]},
+  'Curl inclinado con mancuernas': {
+    frames:[{hip:[112,98], torso:-132, neck:-125, th:10, sh:92, ft:0, ua:96, fa:92}, {hip:[112,98], torso:-132, neck:-125, th:10, sh:92, ft:0, ua:96, fa:-40}],
+    eq:[['db','hand'],['db','hand2',null,'back']], hl:[{bone:'ua', t:0.5, side:1, off:3.5, rx:6, ry:3}], bg:XA_BG.inclineCurl, tempo:[1.0,0.5,2.2,0.4]},
+  'Elevación de gemelos en máquina': {
+    frames:[{anchor:'toe', toe:[112,110], ft:-18, th:90, sh:90, torso:-90, neck:-90, ua:130, fa:-60},
+            {anchor:'toe', toe:[112,110], ft:38, th:90, sh:90, torso:-90, neck:-90, ua:130, fa:-60}],
+    eq:[['pad','sho',-5,-3,13,5,'back']], hl:[{bone:'sh', t:0.3, side:-1, off:3, rx:6, ry:3.5}], bg:XA_BG.calf, tempo:[0.8,0.8,1.6,0.6]},
+  'Sentadilla en Smith': {
+    frames:[{anchor:'foot', ankle:[100,126], th:92, sh:88, torso:-88, neck:-88, ft:0, ua:120, fa:-70},
+            {anchor:'foot', ankle:[100,126], th:5, sh:115, torso:-60, neck:-70, ft:0, ua:148, fa:-42}],
+    eq:[['plate','hand',9,'back']], hl:[{bone:'th', t:0.5, side:1, off:4, rx:8, ry:4},{bone:'th', t:0.05, side:-1, off:5, rx:6, ry:5}],
+    bg:XA_BG.smithSquat + XA_GROUND(128), tempo:[1.2,0.3,2.0,0.4]},
+  'Sentadilla': {
+    frames:[{anchor:'foot', ankle:[100,126], th:92, sh:88, torso:-88, neck:-88, ft:0, ua:120, fa:-70},
+            {anchor:'foot', ankle:[100,126], th:5, sh:115, torso:-60, neck:-70, ft:0, ua:148, fa:-42}],
+    eq:[['plate','hand',9,'back']], hl:[{bone:'th', t:0.5, side:1, off:4, rx:8, ry:4},{bone:'th', t:0.05, side:-1, off:5, rx:6, ry:5}],
+    bg:XA_GROUND(128), tempo:[1.2,0.3,2.0,0.4]},
+  'Peso muerto rumano': {
+    frames:[{anchor:'foot', ankle:[96,126], th:92, sh:88, torso:-88, neck:-88, ft:0, ua:92, fa:92},
+            {anchor:'foot', ankle:[96,126], th:45, sh:95, torso:-30, neck:-20, ft:0, ua:100, fa:100}],
+    eq:[['plate','hand',9.5]], hl:[{bone:'th', t:0.5, side:-1, off:4, rx:8, ry:4},{bone:'th', t:0.05, side:-1, off:5, rx:6, ry:5}],
+    bg:XA_GROUND(128), tempo:[1.2,0.3,2.0,0.4]},
+  'Prensa de piernas': {
+    frames:[{hip:[78,96], torso:-150, neck:-140, th:-75, sh:10, ft:-135, ua:60, fa:20},
+            {hip:[78,96], torso:-150, neck:-140, th:-38, sh:-38, ft:-128, ua:60, fa:20}],
+    eq:[['plateLine','ankle',45,14,4,-4]], hl:[{bone:'th', t:0.5, side:1, off:4, rx:8, ry:4}], bg:XA_BG.legPress, tempo:[1.0,0.3,1.8,0.3]},
+  'Curl femoral': {
+    prone:true,
+    frames:[{hip:[112,90], torso:180, neck:185, th:0, sh:0, ft:80, ua:155, fa:180}, {hip:[112,90], torso:180, neck:185, th:0, sh:-110, ft:-25, ua:155, fa:180}],
+    eq:[['rollerN','knee','ankle',0.9,7,1]], hl:[{bone:'th', t:0.5, side:1, off:4, rx:8, ry:4}], bg:XA_BG.legCurl, tempo:[1.0,0.4,1.8,0.3]},
+  'Extensión de cuádriceps': {
+    frames:[{hip:[95,92], torso:-96, neck:-92, th:0, sh:85, ft:80, ua:100, fa:40}, {hip:[95,92], torso:-96, neck:-92, th:0, sh:-5, ft:-80, ua:100, fa:40}],
+    eq:[['rollerN','knee','ankle',0.85,7,1]], hl:[{bone:'th', t:0.5, side:1, off:4, rx:8, ry:4}], bg:XA_BG.legExt, tempo:[1.0,0.6,1.8,0.3]},
+  'Sentadilla búlgara': {
+    frames:[{anchor:'foot', ankle:[115,126], th:80, sh:95, ankle2:[68,100], bend2:-1, ft:0, ft2:165, torso:-86, neck:-86, ua:92, fa:92},
+            {anchor:'foot', ankle:[115,126], th:15, sh:110, ankle2:[68,100], bend2:-1, ft:0, ft2:165, torso:-74, neck:-80, ua:92, fa:92}],
+    eq:[['db','hand'],['db','hand2',null,'back']], hl:[{bone:'th', t:0.5, side:1, off:4, rx:8, ry:4}], bg:XA_BG.bulgarian, tempo:[1.0,0.3,1.8,0.3]},
+  'Elevación de piernas colgado': {
+    frames:[{anchor:'hand', hand:[104,8], ua:-90, fa:-90, torso:-90, neck:-90, th:90, sh:90, ft:80},
+            {anchor:'hand', hand:[104,8], ua:-90, fa:-90, torso:-94, neck:-90, th:-4, sh:-4, ft:-20}],
+    hl:[{bone:'torso', t:0.35, side:1, off:5, rx:8, ry:3.5}], bg:XA_BG.hang, tempo:[1.1,0.4,1.8,0.4]},
+  'Rueda abdominal': {
+    frames:[{anchor:'knee', knee:[70,122], th:110, sh:178, ft:180, torso:-40, neck:-20, ua:80, fa:85},
+            {anchor:'knee', knee:[70,122], th:160, sh:178, ft:180, torso:-8, neck:-5, ua:10, fa:12}],
+    eq:[['wheel','hand']], hl:[{bone:'torso', t:0.45, side:1, off:5, rx:9, ry:3.5}], bg:XA_GROUND(126), tempo:[1.6,0.4,1.6,0.4]},
+  'Press militar con mancuernas': {
+    frames:[{hip:[96,100], torso:-90, neck:-90, th:0, sh:90, ft:0, ua:100, fa:-88}, {hip:[96,100], torso:-90, neck:-90, th:0, sh:90, ft:0, ua:-88, fa:-90}],
+    lerpJ:['elbow','hand','elbow2','hand2'], eq:[['db','hand']], hl:[{bone:'torso', t:1.0, side:1, off:3, rx:5, ry:5}], bg:XA_BG.seatPress}
+};
+XA_DEFS['HIIT en bicicleta (intervalos)'] = Object.assign({}, XA_DEFS['Bicicleta estática'], {cycle:0.55, label:'30 s a fondo · 90 s suave', bg:XA_BG.bike + XA_BG.speed});
+XA_DEFS['Correr en cinta'] = Object.assign({}, XA_DEFS['Caminata inclinada en cinta'], {cycle:0.75, label:'Ritmo moderado y constante'});
+XA_DEFS['HIIT en cinta (intervalos)'] = Object.assign({}, XA_DEFS['Caminata inclinada en cinta'], {cycle:0.6, label:'Intervalos: rápido y suave', bg:XA_BG.treadmill + XA_BG.speed});
+/* Nombres equivalentes y patrón genérico para el resto de la base */
+const XA_ALIAS = {
+  'Press en máquina Smith':'Press de banca', 'Press militar':'Press militar con mancuernas', 'Press Arnold':'Press militar con mancuernas',
+  'Elevación lateral en polea':'Elevación lateral unilateral', 'Curl de bíceps con barra':'Curl con barra Z',
+  'Extensión de tríceps en polea':'Jalón de tríceps con barra', 'Extensión de tríceps sobre la cabeza':'Extensión de tríceps sobre la cabeza con cuerda',
+  'Extensión de tríceps unilateral en polea':'Jalón de tríceps con cuerda', 'Elevación de talones (gemelos)':'Elevación de gemelos en máquina',
+  'Prensa de piernas':'Prensa de piernas', 'Jalón al pecho':'Jalón abierto al pecho', 'Remo Gironda (cable bajo)':'Remo sentado en polea baja',
+  'Pájaros (deltoide posterior)':'Pec deck invertido (deltoide posterior)', 'Aperturas en polea baja':'Cruce de poleas de abajo hacia arriba',
+  'Cruce de poleas':'Peck deck (contractora)', 'Aperturas con mancuerna':'Press con mancuernas plano', 'Press de banca declinado':'Press de banca'
+};
+const XA_PATTERN = {push_horizontal:'Press de banca', push_vertical:'Press militar con mancuernas', pull_vertical:'Jalón abierto al pecho',
+  pull_horizontal:'Remo sentado en polea baja', squat:'Sentadilla', hinge:'Peso muerto rumano', biceps_curl:'Curl con barra Z',
+  triceps_ext:'Jalón de tríceps con barra', shoulder_raise:'Elevaciones laterales', core:'Abdominales crunch', cardio:'Caminata inclinada en cinta',
+  leg_isolation:'Extensión de cuádriceps'};
+
+/* ---------- reproductor dentro del modal de técnica ---------- */
+function xaDefFor(name, group){
+  if(XA_DEFS[name]) return {def:XA_DEFS[name], exact:true};
+  if(XA_ALIAS[name] && XA_DEFS[XA_ALIAS[name]]) return {def:XA_DEFS[XA_ALIAS[name]], exact:true};
+  const pat = classifyExercise(name, group);
+  if(pat && XA_PATTERN[pat]) return {def:XA_DEFS[XA_PATTERN[pat]], exact:false};
+  return null;
+}
+let xaToken = 0;
+function xaMount(wrap, def, exact, name){
+  const token = ++xaToken;
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  wrap.innerHTML = `<svg class="xa-svg" viewBox="0 0 200 140" role="img" aria-label="Animación de ${escapeHtml(name)}">${def.bg||''}<g class="xa-dyn"></g></svg>
+    <div class="xa-bar"><span class="xa-tempo">${xaTempoLabel(def)}</span>
+      <div class="xa-btns"><button type="button" class="xa-btn" data-xa="slow" aria-pressed="false">Lento</button><button type="button" class="xa-btn" data-xa="play">${reduce ? 'Reproducir' : 'Pausa'}</button></div></div>
+    ${exact ? '' : '<p class="xa-note">Animación general de este tipo de movimiento.</p>'}`;
+  const g = wrap.querySelector('.xa-dyn'), modal = document.getElementById('modalTechnique');
+  let playing = !reduce, speed = 1, time = 0, last = null, lastDraw = -1e9;
+  const draw = () => { g.innerHTML = xaFrameSVG(def, time); };
+  if(reduce){ const F = def.frames; g.innerHTML = xaDraw(def, xaSkeleton(def, F[0], F[1], def.cycle ? 0.5 : 1), 1); } else draw();
+  const [slowBtn, playBtn] = wrap.querySelectorAll('.xa-btn');
+  slowBtn.addEventListener('click', ()=>{ speed = speed===1 ? 0.5 : 1; slowBtn.classList.toggle('on', speed!==1); slowBtn.setAttribute('aria-pressed', String(speed!==1)); });
+  playBtn.addEventListener('click', ()=>{ playing = !playing; playBtn.textContent = playing ? 'Pausa' : 'Reproducir'; last = null; if(playing) requestAnimationFrame(loop); });
+  function loop(ts){
+    if(token !== xaToken || !playing || !modal.classList.contains('open')) return;
+    if(last !== null) time += Math.min(0.1, (ts-last)/1000) * speed;
+    last = ts;
+    if(ts - lastDraw > 30){ draw(); lastDraw = ts; }
+    requestAnimationFrame(loop);
+  }
+  if(playing) requestAnimationFrame(loop);
+}
+
 function openTechniqueModal(name, group){
   document.getElementById('techName').textContent = name;
   const figWrap = document.getElementById('techFigWrap');
   const cuesList = document.getElementById('techCues');
+  const video = document.getElementById('techVideoLink');
+  if(video) video.href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent('técnica ' + name);
   const exactSvg = EXERCISE_ILLUSTRATIONS[name];
   const patternKey = classifyExercise(name, group);
-  if(!exactSvg && (!patternKey || !EXERCISE_PATTERNS[patternKey])){
-    figWrap.innerHTML = '<p style="font-size:13px; color:var(--text-dim); text-align:center; padding:20px 0;">No tenemos una ilustración para este ejercicio personalizado todavía. Busca el nombre para ver tutoriales de técnica correcta.</p>';
-    cuesList.innerHTML = '<li>Empieza con poco peso hasta dominar el movimiento</li><li>Prioriza el rango completo y controlado sobre la carga</li><li>Si sientes dolor articular (no muscular), detente</li>';
-  } else {
-    const pat = patternKey ? EXERCISE_PATTERNS[patternKey] : null;
-    figWrap.innerHTML = exactSvg || pat.svg;
-    const cueList = EXERCISE_CUES[name] || (pat ? pat.cues : null);
-    cuesList.innerHTML = cueList ? cueList.map(c=>`<li>${c}</li>`).join('') : '<li>Empieza con poco peso hasta dominar el movimiento</li><li>Prioriza el rango completo y controlado sobre la carga</li>';
-  }
+  const pat = patternKey ? EXERCISE_PATTERNS[patternKey] : null;
+  const anim = xaDefFor(name, group);
+  xaToken++;
+  if(anim) xaMount(figWrap, anim.def, anim.exact, name);
+  else if(exactSvg || pat) figWrap.innerHTML = exactSvg || pat.svg;
+  else figWrap.innerHTML = '<p style="font-size:13px; color:var(--text-dim); text-align:center; padding:20px 0;">No tenemos una animación para este ejercicio personalizado todavía. Usa el botón de abajo para ver videos de técnica.</p>';
+  const cueList = EXERCISE_CUES[name] || (pat ? pat.cues : null);
+  cuesList.innerHTML = cueList ? cueList.map(c=>`<li>${c}</li>`).join('') : '<li>Empieza con poco peso hasta dominar el movimiento</li><li>Prioriza el rango completo y controlado sobre la carga</li><li>Si sientes dolor articular (no muscular), detente</li>';
   openModal('modalTechnique');
 }
 
@@ -3201,7 +3701,11 @@ document.querySelectorAll('.tab-btn[data-gymtab]').forEach(btn=>{
   });
 });
 
-const TRAINING_PLAN_VERSION = 3;
+const TRAINING_PLAN_VERSION = 4;
+/* Ejercicios de un tipo de día según la plantilla recomendada */
+function templateExercises(tipo){
+  return (DEFAULT_ROUTINES[tipo]||[]).map(e=>({name:e[0],group:e[1],series:e[2],reps:e[3],peso:e[4],notas:e[5]||''}));
+}
 function applyRecommendedPlan(){
   if(state.routinePlan) state.routinePlanPrev = JSON.parse(JSON.stringify(state.routinePlan));
   state.routinePlan = buildDefaultRoutinePlan();
@@ -4047,14 +4551,22 @@ function applyPendingMigrations(){
     computeGoals();
     changed = true; msgs.push('Plan: Recomposición, '+state.goals.kcal.toLocaleString('es-CO')+' kcal y '+state.goals.p+' g de proteína');
   }
-  // 3) Rutina A/B con cardio y abdomen, pedida por el usuario (se guarda copia de la anterior)
+  // 3) Rutina pedida por el usuario (se guarda copia de la anterior).
+  //    v3: plan A/B completo con cardio y abdomen. v4: solo cambian los días de pecho (más pecho alto y centro).
   if(state.onboarded && (state.trainingPlanVersion||1) < TRAINING_PLAN_VERSION){
+    const from = state.trainingPlanVersion||1;
     state.routinePlanPrev = JSON.parse(JSON.stringify(state.routinePlan||{}));
-    state.routinePlan = buildDefaultRoutinePlan();
+    if(from >= 3 && state.routinePlan){
+      Object.values(state.routinePlan).forEach(p=>{ if(p && (p.tipo==='pechoA' || p.tipo==='pechoB')) p.ejercicios = templateExercises(p.tipo); });
+      msgs.push('Días de pecho actualizados: más pecho alto y centro');
+    } else {
+      state.routinePlan = buildDefaultRoutinePlan();
+      msgs.push('Rutina nueva cargada: días A y B con cardio y abdomen');
+    }
     const t = todayISO(), ses = state.sessions && state.sessions[t];
     if(ses && !ses.completed && !ses.exercises.some(ex=>ex.series.some(se=>se.done))) delete state.sessions[t];
     state.trainingPlanVersion = TRAINING_PLAN_VERSION;
-    changed = true; msgs.push('Rutina nueva cargada: días A y B con cardio y abdomen');
+    changed = true;
   }
   if(changed) save();
   if(msgs.length) setTimeout(()=>toast(msgs[0]), 900);
